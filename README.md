@@ -2,37 +2,37 @@
 
 Sharpen your brain with some math — a daily math quiz app for kids.
 
-## מה זה?
+## What is it?
 
-אפליקציה שמכינה ילדים לבחינת הקבלה לתוכנית מחוננים — חידונים יומיים, הסברי פתרון, ושרטוטים.
+A math practice app that helps kids prep for gifted youth entrance exams — daily quizzes, step-by-step solutions, and geometry diagrams.
 
-## תכונות
+## Features
 
-- **אבחון ראשוני** — בחינת רמה קצרה לפני שמתחילים
-- **חידונים מותאמים** — שאלות לפי רמת הידע בכל נושא
-- **תרגול אדפטיבי** — אם טועים, מקבלים שאלת חיזוק באותו נושא
-- **הסברי פתרון** — לכל שאלה יש הסבר מפורט עם שרטוט גיאומטרי (במקרה הצורך)
-- **מעקב התקדמות** — שמירת היסטוריה ושיא רצף תשובות נכונות
+- **Diagnostic test** — a short level assessment before you start
+- **Adaptive quizzes** — questions matched to your skill level per topic
+- **Remediation loop** — get a question wrong and you'll get another one on the same topic until you nail it
+- **Solution explanations** — every question has a detailed explanation with geometry diagrams where relevant
+- **Progress tracking** — saves history and your best answer streak
 
-## נושאים
+## Topics
 
-| נושא | תיאור |
-|------|--------|
-| 🔢 שברים | שברים, אחוזים, שברים פשוטים ועשרוניים |
-| 📐 גיאומטריה | שטח, היקף, נפח — עם שרטוטים |
-| 🔗 סדרות | זיהוי חוקיות וסדרות מספריות |
-| 🧩 הגיון | שאלות חשיבה לוגית |
+| Topic | Description |
+|-------|-------------|
+| 🔢 Fractions | Fractions, percentages, mixed numbers |
+| 📐 Geometry | Area, perimeter, volume — with diagrams |
+| 🔗 Sequences | Patterns and number sequences |
+| 🧩 Logic | Logical reasoning questions |
 
-## שימוש
+## Usage
 
-פתח את `index.html` בדפדפן — לא צריך שרת, לא צריך התקנה.
+Just open `index.html` in a browser — no server, no install needed.
 
 ```
 open index.html
 ```
 
-כל הנתונים נשמרים ב-`localStorage` של הדפדפן.
+All data is saved in the browser's `localStorage`.
 
-## טכנולוגיה
+## Tech
 
-קובץ HTML בודד — Vanilla JS, CSS, SVG. ללא תלויות חיצוניות.
+Single HTML file — Vanilla JS, CSS, SVG. Zero dependencies.
