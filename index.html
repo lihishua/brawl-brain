@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f0c29">
+<title>Brawl Brain 🧠</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  font-family:'Rubik',sans-serif;
+  direction:rtl;
+  min-height:100vh;
+  min-height:100dvh;
+  background:linear-gradient(145deg,#0f0c29 0%,#1a1040 40%,#24243e 100%);
+  color:#fff;
+  overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:'Rubik',sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent}
+input{font-family:'Rubik',sans-serif}
+
+/* Animations */
+@keyframes confetti-fall{
+  0%{transform:translateY(0) rotate(0deg);opacity:1}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+}
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-8px)}
+  50%{transform:translateX(8px)}
+  75%{transform:translateX(-4px)}
+}
+@keyframes float-in{
+  from{opacity:0;transform:translateY(24px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes pulse-glow{
+  0%,100%{box-shadow:0 0 0 0 rgba(232,93,117,0.35)}
+  50%{box-shadow:0 0 0 14px rgba(232,93,117,0)}
+}
+@keyframes slide-up{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes pop-in{
+  0%{transform:scale(0.8);opacity:0}
+  60%{transform:scale(1.06)}
+  100%{transform:scale(1);opacity:1}
+}
+@keyframes star-spin{
+  0%{transform:rotate(0deg) scale(1)}
+  50%{transform:rotate(180deg) scale(1.3)}
+  100%{transform:rotate(360deg) scale(1)}
+}
+
+.screen{display:none;animation:float-in .45s ease}
+.screen.active{display:block}
+
+/* ── Welcome ── */
+.welcome-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;padding:20px}
+.welcome-card{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:28px;padding:40px 28px;max-width:420px;width:100%;text-align:center;border:1px solid rgba(255,255,255,.1)}
+.welcome-emoji{font-size:64px;margin-bottom:12px}
+.welcome-title{font-size:36px;font-weight:800;background:linear-gradient(135deg,#FFD700,#FF6B35,#E85D75);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;direction:ltr;letter-spacing:-1px;text-transform:uppercase}
+.welcome-sub{font-size:14px;color:rgba(255,255,255,.55);margin-bottom:28px;line-height:1.55}
+.features{display:flex;flex-direction:column;gap:12px;margin-bottom:28px;text-align:right}
+.feat{display:flex;align-items:center;gap:10px;font-size:15px;color:rgba(255,255,255,.8)}
+.feat-icon{font-size:20px}
+.name-input{width:100%;padding:14px 18px;border-radius:14px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#fff;font-size:17px;outline:none;margin-bottom:16px;text-align:right;transition:border-color .2s}
+.name-input:focus{border-color:rgba(139,92,246,.6)}
+.name-input::placeholder{color:rgba(255,255,255,.35)}
+.btn-start{width:100%;padding:16px 24px;border-radius:14px;border:none;background:linear-gradient(135deg,#E85D75,#8B5CF6);color:#fff;font-size:19px;font-weight:700;animation:pulse-glow 2s infinite;transition:transform .12s}
+.btn-start:active{transform:scale(.97)}
+.btn-start:disabled{opacity:.45;animation:none}
+.btn-reset{margin-top:12px;padding:10px 20px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.5);font-size:14px}
+.welcome-note{margin-top:14px;font-size:13px;color:rgba(255,255,255,.38)}
+
+/* ── Quiz ── */
+.quiz-wrap{max-width:560px;margin:0 auto;padding:20px 16px}
+.quiz-header{margin-bottom:18px}
+.quiz-hrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.quiz-name{font-size:15px;color:rgba(255,255,255,.7);font-weight:500}
+.quiz-counter{font-size:14px;color:rgba(255,255,255,.5);font-weight:500}
+.prog-bg{height:8px;border-radius:4px;background:rgba(255,255,255,.1);overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#E85D75,#8B5CF6);transition:width .5s ease}
+.streak-badge{display:inline-block;margin-top:8px;padding:4px 14px;border-radius:20px;background:rgba(245,158,11,.2);color:#F59E0B;font-size:14px;font-weight:600;animation:pop-in .3s ease}
+.topic-badge{display:inline-block;padding:6px 16px;border-radius:20px;font-size:14px;font-weight:600;margin-bottom:14px}
+.diag-tag{font-size:12px;opacity:.7}
+.q-card{background:rgba(255,255,255,.08);border-radius:20px;padding:26px 22px;margin-bottom:18px;border:1px solid rgba(255,255,255,.1)}
+.q-text{font-size:22px;font-weight:600;line-height:1.65;text-align:right}
+.q-card.topic-fractions .q-text{font-size:27px;line-height:1.7}
+.q-card.topic-fractions .opt-btn{font-size:19px;padding:14px 12px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;margin-bottom:16px}
+.opt-btn{display:flex;align-items:center;gap:10px;padding:13px 12px;border-radius:14px;border:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#fff;font-size:16px;font-weight:500;text-align:right;direction:rtl;position:relative;transition:all .18s;width:100%}
+.opt-btn.opt-idk{border-style:dashed;border-color:rgba(245,158,11,.4);color:rgba(245,158,11,.75);grid-column:1/-1}
+.opt-btn:active:not(:disabled){transform:scale(.98)}
+.opt-btn:disabled{cursor:default}
+.opt-btn.correct{border-color:#10B981;background:rgba(16,185,129,.15);color:#10B981}
+.opt-btn.wrong{border-color:#EF4444;background:rgba(239,68,68,.15);color:#EF4444}
+.opt-btn.dimmed{opacity:.35}
+.opt-btn.shake{animation:shake .4s ease}
+.opt-lbl{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0}
+.opt-txt{flex:1;word-break:break-word}
+.opt-mark{font-size:18px;font-weight:800;flex-shrink:0}
+
+/* Feedback */
+.fb-card{border-radius:20px;padding:22px 20px;border:2px solid;animation:slide-up .4s ease;margin-top:4px}
+.fb-card.ok{background:#ECFDF5;border-color:#10B981}
+.fb-card.no{background:#FEF2F2;border-color:#EF4444}
+.fb-card.idk{background:#EFF6FF;border-color:#3B82F6}
+.fb-idk{color:#3B82F6}
+.fb-header{margin-bottom:10px;font-size:17px;font-weight:600}
+.fb-ok{color:#10B981}
+.fb-no{color:#EF4444}
+.fb-remed-hint{margin-top:8px;font-size:14px;font-weight:500;color:#F59E0B}
+.remed-tip{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:14px 18px;margin-bottom:12px;animation:slide-up .35s ease}
+.remed-tip-title{font-size:14px;font-weight:700;color:#F59E0B;margin-bottom:6px}
+.remed-badge{display:inline-block;margin-bottom:10px;padding:5px 14px;border-radius:20px;background:rgba(245,158,11,.18);color:#F59E0B;font-size:13px;font-weight:600;animation:pop-in .3s ease}
+.expl-box{background:rgba(0,0,0,.12);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+.expl-title{font-size:15px;font-weight:700;color:#F59E0B;margin-bottom:8px}
+.expl-text{font-size:14.5px;line-height:1.85;color:rgba(0,0,0,.7);direction:rtl;text-align:right}
+.btn-next{width:100%;padding:14px 20px;border-radius:14px;border:none;background:linear-gradient(135deg,#E85D75,#8B5CF6);color:#fff;font-size:17px;font-weight:700;transition:transform .12s}
+.btn-next:active{transform:scale(.97)}
+
+/* Results */
+.res-wrap{max-width:560px;margin:0 auto;padding:28px 16px}
+.res-card{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:28px;padding:34px 22px;border:1px solid rgba(255,255,255,.1);text-align:center;animation:float-in .5s ease}
+.res-emoji{font-size:56px;margin-bottom:8px}
+.res-title{font-size:22px;font-weight:700;margin-bottom:8px}
+.res-msg{font-size:15px;color:rgba(255,255,255,.65);margin-bottom:22px}
+.score-circle{width:115px;height:115px;border-radius:50%;background:linear-gradient(135deg,rgba(232,93,117,.2),rgba(139,92,246,.2));border:3px solid rgba(255,255,255,.15);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 26px}
+.score-num{font-size:28px;font-weight:800}
+.score-pct{font-size:14px;color:rgba(255,255,255,.5)}
+.breakdown{text-align:right;margin-bottom:22px}
+.breakdown-title{font-size:15px;font-weight:600;margin-bottom:12px;color:rgba(255,255,255,.8)}
+.topic-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.04);margin-bottom:8px;cursor:pointer;transition:background .2s}
+.topic-row:active{background:rgba(255,255,255,.08)}
+.tr-left{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500}
+.tr-right{display:flex;align-items:center;gap:8px}
+.tr-bar-bg{width:50px;height:6px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden}
+.tr-bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.tr-score{font-size:13px;color:rgba(255,255,255,.6);font-weight:500;min-width:28px;text-align:center}
+.lvl-badge{font-size:11px;padding:2px 8px;border-radius:8px;background:rgba(139,92,246,.2);color:#8B5CF6;font-weight:600}
+.stats-row{display:flex;justify-content:space-around;margin-bottom:22px;padding:14px 0;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)}
+.stat-item{text-align:center}
+.stat-num{font-size:22px;font-weight:800;color:#F59E0B}
+.stat-lbl{font-size:11px;color:rgba(255,255,255,.5);margin-top:4px}
+.encourage{margin-top:14px;font-size:13px;color:rgba(255,255,255,.38);line-height:1.5}
+
+/* Review */
+.rev-wrap{max-width:560px;margin:0 auto;padding:20px 16px;animation:float-in .4s ease}
+.btn-back{padding:10px 20px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.7);font-size:14px;margin-bottom:16px}
+.rev-title{font-size:20px;font-weight:700;margin-bottom:18px}
+.rev-card{background:rgba(255,255,255,.06);border-radius:16px;padding:18px;margin-bottom:14px;border-right:4px solid}
+.rev-q{font-size:15px;font-weight:600;margin-bottom:8px;line-height:1.5}
+.rev-res{font-size:14px;font-weight:600;margin-bottom:8px}
+.rev-expl{font-size:13.5px;line-height:1.7;color:rgba(255,255,255,.55);direction:rtl;text-align:right}
+
+/* Confetti */
+.confetti-piece{position:fixed;top:-20px;width:10px;height:10px;z-index:9999;pointer-events:none}
+
+/* Geometry diagrams */
+.shape-diagram{text-align:center;margin:14px 0 2px;opacity:.93}
+.expl-diagram{text-align:center;margin:10px 0 8px}
+
+/* Mobile tweaks */
+@media(max-width:400px){
+  .welcome-card{padding:32px 20px}
+  .welcome-title{font-size:26px}
+  .q-text{font-size:19px}
+  .q-card.topic-fractions .q-text{font-size:23px}
+  .opts{gap:8px}
+  .opt-btn{padding:11px 10px;font-size:15px;gap:8px}
+  .q-card.topic-fractions .opt-btn{font-size:17px}
+  .opt-lbl{width:22px;height:22px;font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ WELCOME SCREEN ═══════════════════ -->
+<div id="screen-welcome" class="screen active">
+  <div class="welcome-wrap">
+    <div class="welcome-card">
+      <div class="welcome-emoji">🧠</div>
+      <h1 class="welcome-title">Brawl Brain</h1>
+      <p class="welcome-sub">אימון מתמטי למבחן נוער מוכשר — בר אילן</p>
+      <div class="features">
+        <div class="feat"><span class="feat-icon">🎯</span><span>5 שאלות כל יום</span></div>
+        <div class="feat"><span class="feat-icon">📈</span><span>הרמה עולה כשמצליחים</span></div>
+        <div class="feat"><span class="feat-icon">💡</span><span>הסברים לכל שאלה</span></div>
+      </div>
+      <div id="welcome-new">
+        <input id="name-input" class="name-input" type="text" placeholder="מה השם שלך? 😊">
+        <button id="btn-go" class="btn-start" disabled onclick="startDiagnostic()">!בואו נתחיל 🚀</button>
+        <p class="welcome-note">קודם נעשה מבחן קצר כדי לדעת מה אתה כבר יודע</p>
+      </div>
+      <div id="welcome-continue" style="display:none">
+        <button class="btn-start" onclick="startDailyQuiz()">!ממשיכים לתרגל 💪</button>
+        <button class="btn-reset" onclick="resetAll()">התחל מחדש</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ QUIZ SCREEN ═══════════════════ -->
+<div id="screen-quiz" class="screen">
+  <div class="quiz-wrap">
+    <div class="quiz-header">
+      <div class="quiz-hrow">
+        <span class="quiz-name" id="quiz-player-name"></span>
+        <span class="quiz-counter" id="quiz-counter"></span>
+      </div>
+      <div class="prog-bg"><div class="prog-fill" id="prog-fill"></div></div>
+      <div id="streak-badge" class="streak-badge" style="display:none"></div>
+    </div>
+    <div class="topic-badge" id="topic-badge"></div>
+    <div id="remed-tip"></div>
+    <div class="q-card"><p class="q-text" id="q-text"></p><div id="q-diagram" class="shape-diagram"></div></div>
+    <div class="opts" id="opts-container"></div>
+    <div id="feedback-area"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ RESULTS SCREEN ═══════════════════ -->
+<div id="screen-results" class="screen">
+  <div class="res-wrap">
+    <div class="res-card" id="results-content"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ REVIEW SCREEN ═══════════════════ -->
+<div id="screen-review" class="screen">
+  <div class="rev-wrap" id="review-content"></div>
+</div>
+
+<!-- ═══════════════════ CONFETTI CONTAINER ═══════════════════ -->
+<div id="confetti-container"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────────────────────
+
+const TOPICS = {
+  arithmetic:{name:"פעולות חשבון",icon:"🔢",color:"#E85D75"},
+  fractions:{name:"שברים",icon:"🍕",color:"#F59E0B"},
+  order_ops:{name:"סדר פעולות",icon:"📐",color:"#8B5CF6"},
+  word_problems:{name:"בעיות מילוליות",icon:"📝",color:"#10B981"},
+  geometry:{name:"גיאומטריה",icon:"📏",color:"#3B82F6"},
+  sequences:{name:"סדרות ותבניות",icon:"🔮",color:"#EC4899"},
+  logic:{name:"חשיבה לוגית",icon:"🧩",color:"#06B6D4"}
+};
+
+const Q = [
+  // ── ARITHMETIC ──
+  {id:"a1",topic:"arithmetic",d:1,q:"כמה זה 347 + 258?",o:["595","605","615","585"],c:1,
+   e:"נחבר מימין לשמאל:\n7+8=15, כותבים 5 ונושאים 1\n4+5+1=10, כותבים 0 ונושאים 1\n3+2+1=6\nהתשובה: 605 ✨"},
+  {id:"a2",topic:"arithmetic",d:1,q:"כמה זה 1000 − 387?",o:["613","623","713","603"],c:0,
+   e:"1000 − 387:\nנחשוב: 387 + ? = 1000\n387 + 613 = 1000 ✅"},
+  {id:"a3",topic:"arithmetic",d:1,q:"כמה זה 25 × 4?",o:["90","100","80","120"],c:1,
+   e:"25 × 4 = 100\nטיפ: 25 × 4 זה תמיד 100! 💡\nכמו 4 מטבעות של 25 אגורות = שקל"},
+  {id:"a4",topic:"arithmetic",d:2,q:"כמה זה 36 × 15?",o:["540","530","550","510"],c:0,
+   e:"36 × 15 = 36 × 10 + 36 × 5\n= 360 + 180 = 540\nטיפ: לפרק ל-10+5 💡"},
+  {id:"a5",topic:"arithmetic",d:2,q:"מהו המספר הכי קרוב ל-498 × 5?",o:["2000","2500","3000","1500"],c:1,
+   e:"498 קרוב ל-500\n500 × 5 = 2500\nזה אומדן! 498×5=2490 ≈ 2500 🎯"},
+  {id:"a6",topic:"arithmetic",d:2,q:"564 ÷ 12 = ?",o:["45","46","47","48"],c:2,
+   e:"12 × 40 = 480\n564 − 480 = 84\n12 × 7 = 84\nסה\"כ: 40 + 7 = 47 ✨"},
+  {id:"a7",topic:"arithmetic",d:3,q:"כמה זה 999 × 999 + 999?",o:["999,000","998,001","999,999","1,000,000"],c:0,
+   e:"טריק! 🧠\n999×999 + 999\n= 999 × (999+1)\n= 999 × 1000\n= 999,000"},
+  {id:"a8",topic:"arithmetic",d:3,q:"a × b = 72 וגם a + b = 17.\nמה הם a ו-b?",o:["8 ו-9","6 ו-12","4 ו-18","3 ו-24"],c:0,
+   e:"מחפשים שני מספרים:\n8 × 9 = 72 ✅\n8 + 9 = 17 ✅\nמושלם! 🌟"},
+  {id:"a9",topic:"arithmetic",d:1,q:"כמה זה 450 + 375?",o:["825","815","835","725"],c:0,
+   e:"450 + 375:\n400+300=700\n50+75=125\n700+125 = 825 ✨"},
+  {id:"a10",topic:"arithmetic",d:3,q:"מהי ספרת האחדות של 7⁴?",o:["1","7","9","3"],c:0,
+   e:"7¹=7, 7²=49, 7³=343, 7⁴=2401\nספרת האחדות: 1\nטיפ: מחזוריות! 7,9,3,1,7,9,3,1... 🔄"},
+
+  // ── FRACTIONS ──
+  {id:"f1",topic:"fractions",d:1,q:"כמה זה ½ + ¼?",o:["¾","²⁄₄","³⁄₆","½"],c:0,
+   e:"½ = ²⁄₄\n²⁄₄ + ¼ = ¾\nמכנה משותף! 🍕"},
+  {id:"f2",topic:"fractions",d:1,q:"מהו ⅓ מתוך 12?",o:["3","4","6","2"],c:1,
+   e:"⅓ מתוך 12 = 12 ÷ 3 = 4\nמחלקים ל-3 חלקים שווים 🍕"},
+  {id:"f3",topic:"fractions",d:1,q:"איזה שבר גדול יותר: ⅗ או ½?",o:["⅗","½","שווים","אי אפשר לדעת"],c:0,
+   e:"מכנה משותף 10:\n⅗ = ⁶⁄₁₀\n½ = ⁵⁄₁₀\n6 > 5, לכן ⅗ > ½ 🏆"},
+  {id:"f4",topic:"fractions",d:2,q:"כמה זה ⅔ + ⅚?",o:["³⁄₂","⁷⁄₆","⁸⁄₆","1"],c:0,
+   e:"מכנה משותף 6:\n⅔ = ⁴⁄₆\n⁴⁄₆ + ⁵⁄₆ = ⁹⁄₆ = ³⁄₂ = 1½ ✨"},
+  {id:"f5",topic:"fractions",d:2,q:"כמה זה 0.75 כשבר פשוט?",o:["¾","⅗","⁷⁄₁₀","⅘"],c:0,
+   e:"0.75 = 75/100 = ¾\n(מחלקים ב-25) 💰"},
+  {id:"f6",topic:"fractions",d:2,q:"כמה זה ⅖ × 15?",o:["6","5","8","3"],c:0,
+   e:"⅖ × 15 = 2 × (15÷5) = 2 × 3 = 6 🚀"},
+  {id:"f7",topic:"fractions",d:3,q:"כמה זה ¾ ÷ ⅜?",o:["2","1","³⁄₂","⁹⁄₃₂"],c:0,
+   e:"חילוק = כפל בהופכי!\n¾ × ⁸⁄₃ = ²⁴⁄₁₂ = 2 🎯"},
+  {id:"f8",topic:"fractions",d:3,q:"מה עדיף: ⅜ מ-80 ש\"ח או ⅖ מ-75 ש\"ח?",o:["⅜ מ-80","⅖ מ-75","שווים!","חסר מידע"],c:2,
+   e:"⅜ × 80 = 240÷8 = 30 ש\"ח\n⅖ × 75 = 150÷5 = 30 ש\"ח\nשווה בדיוק! 🤝"},
+  {id:"f9",topic:"fractions",d:1,q:"כמה זה ¼ + ¼ + ¼?",o:["¾","³⁄₁₂","1","½"],c:0,
+   e:"¼ + ¼ + ¼ = ¾\nשלושה רבעים! כמו 3 חתיכות מתוך 4 🍕"},
+  {id:"f10",topic:"fractions",d:2,q:"סדרו מהקטן לגדול: ⅓, ¼, ½",o:["¼, ⅓, ½","⅓, ¼, ½","½, ⅓, ¼","¼, ½, ⅓"],c:0,
+   e:"מכנה משותף 12:\n¼ = ³⁄₁₂\n⅓ = ⁴⁄₁₂\n½ = ⁶⁄₁₂\nסדר: ¼ < ⅓ < ½ 📊"},
+
+  // ── ORDER OF OPERATIONS ──
+  {id:"o1",topic:"order_ops",d:1,q:"כמה זה 3 + 4 × 2?",o:["14","11","10","24"],c:1,
+   e:"כפל לפני חיבור! ⚠️\n4 × 2 = 8\n3 + 8 = 11"},
+  {id:"o2",topic:"order_ops",d:1,q:"כמה זה (5 + 3) × 2?",o:["16","11","13","10"],c:0,
+   e:"סוגריים קודם! 📌\n(5+3) = 8\n8 × 2 = 16"},
+  {id:"o3",topic:"order_ops",d:2,q:"כמה זה 100 − 3 × (10 + 5) ÷ 5?",o:["91","29","85","95"],c:0,
+   e:"1) סוגריים: (10+5)=15\n2) כפל: 3×15=45\n3) חילוק: 45÷5=9\n4) חיסור: 100−9=91 🎯"},
+  {id:"o4",topic:"order_ops",d:2,q:"כמה זה 2 + 3² × 4?",o:["38","44","100","56"],c:0,
+   e:"חזקה ← כפל ← חיבור\n3² = 9\n9 × 4 = 36\n2 + 36 = 38 ⚡"},
+  {id:"o5",topic:"order_ops",d:3,q:"5 × (12 − 4²) + 6 ÷ 3 = ?",o:["−18","22","−22","18"],c:0,
+   e:"בסוגריים: 4²=16, 12−16=−4\n5×(−4)=−20\n6÷3=2\n−20+2 = −18 🧮"},
+  {id:"o6",topic:"order_ops",d:3,q:"השלם: 8 × __ − 12 ÷ 4 = 29",o:["4","3","5","6"],c:0,
+   e:"12÷4 = 3\n8×__ − 3 = 29\n8×__ = 32\n__ = 4 ✅"},
+  {id:"o7",topic:"order_ops",d:1,q:"כמה זה 10 − 2 + 3?",o:["11","5","9","8"],c:0,
+   e:"משמאל לימין (חיבור וחיסור באותה עדיפות):\n10 − 2 = 8\n8 + 3 = 11 ✨"},
+  {id:"o8",topic:"order_ops",d:2,q:"כמה זה 48 ÷ (2 × 4) + 1?",o:["7","25","13","4"],c:0,
+   e:"סוגריים: 2×4=8\n48÷8=6\n6+1=7 🎯"},
+
+  // ── WORD PROBLEMS ──
+  {id:"w1",topic:"word_problems",d:1,q:"בחנות 120 תפוחים. מכרו ¼ מהם. כמה נשארו?",o:["90","80","100","60"],c:0,
+   e:"מכרו: 120÷4 = 30\nנשארו: 120−30 = 90 🍎"},
+  {id:"w2",topic:"word_problems",d:1,q:"לדנה 45 ש\"ח ולרוני פי 3. כמה לשניהם ביחד?",o:["180","135","90","150"],c:0,
+   e:"רוני: 45×3 = 135\nביחד: 45+135 = 180 ש\"ח 💰"},
+  {id:"w3",topic:"word_problems",d:2,q:"ממוצע 4 תלמידים: 85. הצטרף תלמיד עם 90. מהו הממוצע החדש?",o:["86","87","85.5","88"],c:0,
+   e:"סכום 4: 85×4=340\nסכום חדש: 340+90=430\nממוצע: 430÷5=86 📊"},
+  {id:"w4",topic:"word_problems",d:2,q:"רכבת ב-80 קמ\"ש. כמה זמן לעבור 300 ק\"מ?",o:["3:45","3:30","4:00","3:00"],c:0,
+   e:"300÷80 = 3.75 שעות\n0.75 שעה = 45 דקות\nסה\"כ: 3 שעות ו-45 דקות 🚂"},
+  {id:"w5",topic:"word_problems",d:2,q:"סוחר קנה 20 אגרטלים ב-700 ש\"ח. מכר כל אחד ב-50 ש\"ח. כמה הרוויח?",o:["300","250","350","200"],c:0,
+   e:"מכר: 20×50=1000\nקנה: 700\nרווח: 1000−700 = 300 ש\"ח 💸"},
+  {id:"w6",topic:"word_problems",d:3,q:"ברז 1 ממלא בריכה ב-6 שעות, ברז 2 ב-3 שעות. ביחד?",o:["2 שעות","4.5","3","1.5"],c:0,
+   e:"ברז 1: ⅙ בשעה\nברז 2: ⅓ בשעה\nביחד: ⅙+²⁄₆ = ³⁄₆ = ½ בשעה\n1÷½ = 2 שעות 🚿"},
+  {id:"w7",topic:"word_problems",d:3,q:"40 תמונות עם מסגרת עץ, 35 מתכת. 12 ציורי שמן בעץ, 8 שמן במתכת. כמה אינן ציורי שמן?",o:["55","45","20","75"],c:0,
+   e:"סה\"כ: 40+35=75\nשמן: 12+8=20\nלא שמן: 75−20=55 🎨"},
+  {id:"w8",topic:"word_problems",d:1,q:"בכיתה 32 תלמידים. ¼ יצאו להפסקה. כמה נשארו?",o:["24","28","20","16"],c:0,
+   e:"יצאו: 32÷4=8\nנשארו: 32−8=24 📚"},
+  {id:"w9",topic:"word_problems",d:2,q:"אבא קנה 3 קילו תפוזים ב-8 ש\"ח לקילו ו-2 קילו בננות ב-12 ש\"ח לקילו. כמה שילם?",o:["48","36","44","52"],c:0,
+   e:"תפוזים: 3×8=24\nבננות: 2×12=24\nסה\"כ: 24+24=48 ש\"ח 🍊🍌"},
+  {id:"w10",topic:"word_problems",d:3,q:"גיל אבא פי 4 מגיל הבן. בעוד 5 שנים גיל אבא יהיה פי 3 מגיל הבן. מהו גיל הבן?",o:["10","8","5","12"],c:0,
+   e:"בן=x, אבא=4x\nבעוד 5: 4x+5 = 3(x+5)\n4x+5 = 3x+15\nx = 10\nהבן בן 10! 🎂"},
+
+  // ── GEOMETRY ──
+  {id:"g1",topic:"geometry",d:1,q:"היקף ריבוע שצלעו 7 ס\"מ?",o:["28","49","14","21"],c:0,
+   shape:{type:"square",d:[7]},
+   e:"היקף ריבוע = 4 × צלע\n4 × 7 = 28 ס\"מ ⬛"},
+  {id:"g2",topic:"geometry",d:1,q:"שטח מלבן 8 ס\"מ על 5 ס\"מ?",o:["40 סמ\"ר","26 סמ\"ר","13 סמ\"ר","45 סמ\"ר"],c:0,
+   shape:{type:"rect",d:[8,5]},
+   e:"שטח = אורך × רוחב\n8×5 = 40 סמ\"ר 📏"},
+  {id:"g3",topic:"geometry",d:2,q:"שטח משולש ישר-זווית 24 סמ\"ר. ניצב אחד 8 ס\"מ. מהו השני?",o:["6","3","4","8"],c:0,
+   shape:{type:"triangle",d:[8,6]},
+   e:"שטח = (בסיס×גובה)÷2\n24 = (8×?)÷2\n48 = 8×?\n? = 6 ס\"מ 📐"},
+  {id:"g4",topic:"geometry",d:2,q:"נפח קובייה שצלעה 5 ס\"מ?",o:["125 סמ\"ק","25","75","150"],c:0,
+   shape:{type:"cube",d:[5]},
+   e:"נפח = צלע³\n5×5×5 = 125 סמ\"ק 🧊"},
+  {id:"g5",topic:"geometry",d:2,q:"שטח פנים של תיבה 4×3×2?",o:["52","24","48","26"],c:0,
+   shape:{type:"box",d:[4,3,2]},
+   e:"2×(4×3 + 4×2 + 3×2)\n= 2×(12+8+6)\n= 2×26 = 52 📦"},
+  {id:"g6",topic:"geometry",d:3,q:"על צלע ריבוע (צלע 10) נבנה משולש שווה-צלעות. מהו היקף הצורה (ללא הצלע המשותפת)?",o:["50","40","60","70"],c:0,
+   shape:{type:"square_triangle",d:[10]},
+   e:"3 צלעות ריבוע + 2 צלעות משולש\n= 5 × 10 = 50 ס\"מ 🔷"},
+  {id:"g7",topic:"geometry",d:3,q:"ריבוע גדול צלע 6 ס\"מ, בתוכו ריבוע קטן צלע 4 ס\"מ. שטח האזור ביניהם?",o:["20 סמ\"ר","12","16","10"],c:0,
+   shape:{type:"nested_squares",d:[6,4]},
+   e:"גדול: 6×6=36\nקטן: 4×4=16\nביניהם: 36−16=20 סמ\"ר 🎯"},
+  {id:"g8",topic:"geometry",d:1,q:"היקף מלבן שאורכו 10 ס\"מ ורוחבו 4 ס\"מ?",o:["28 ס\"מ","40 ס\"מ","14 ס\"מ","20 ס\"מ"],c:0,
+   shape:{type:"rect",d:[10,4]},
+   e:"היקף = 2×(אורך+רוחב)\n= 2×(10+4)\n= 2×14 = 28 ס\"מ 📏"},
+
+  // ── SEQUENCES ──
+  {id:"s1",topic:"sequences",d:1,q:"האיבר הבא: 2, 5, 8, 11, ?",o:["14","13","15","12"],c:0,
+   e:"+3 בכל פעם!\n2→5→8→11→14 📈"},
+  {id:"s2",topic:"sequences",d:1,q:"האיבר הבא: 3, 6, 12, 24, ?",o:["48","36","30","42"],c:0,
+   e:"×2 בכל פעם!\n3→6→12→24→48 🚀"},
+  {id:"s3",topic:"sequences",d:2,q:"האיבר הבא: 1, 1, 2, 3, 5, 8, ?",o:["13","11","10","14"],c:0,
+   e:"סדרת פיבונאצ'י! 🌟\nכל מספר = סכום שני הקודמים\n5+8=13"},
+  {id:"s4",topic:"sequences",d:2,q:"האיבר הבא: 1, 4, 9, 16, 25, ?",o:["36","30","35","49"],c:0,
+   e:"מספרים ריבועיים! 🔲\n1²,2²,3²,4²,5²,6²\n6²=36"},
+  {id:"s5",topic:"sequences",d:3,q:"האיבר הבא: 2, 6, 12, 20, 30, ?",o:["42","40","44","38"],c:0,
+   e:"הפרשים: 4,6,8,10,?\nגדלים ב-2!\n30+12=42 🧠"},
+  {id:"s6",topic:"sequences",d:3,q:"המספר החסר: 3, ?, 27, 81, 243",o:["9","12","15","6"],c:0,
+   e:"חזקות של 3! 🔥\n3¹=3, 3²=9, 3³=27...\nהחסר: 9"},
+  {id:"s7",topic:"sequences",d:1,q:"האיבר הבא: 100, 90, 80, 70, ?",o:["60","65","50","55"],c:0,
+   e:"−10 בכל פעם!\n100→90→80→70→60 📉"},
+  {id:"s8",topic:"sequences",d:2,q:"האיבר הבא: 1, 3, 7, 15, 31, ?",o:["63","62","47","45"],c:0,
+   e:"כל מספר = הקודם × 2 + 1\n31×2+1 = 63\nאו: 2¹−1, 2²−1, 2³−1... 🔮"},
+
+  // ── LOGIC ──
+  {id:"l1",topic:"logic",d:1,q:"לדן 3 אחים. לכל אח יש אחות אחת. כמה ילדים?",o:["5","7","4","6"],c:0,
+   e:"לכולם אותה אחות! 👧\nדן + 3 אחים + 1 אחות = 5"},
+  {id:"l2",topic:"logic",d:1,q:"איזה משפט סותר: \"כל הכלבים אוהבים עצמות\"?",o:["יש כלב שלא אוהב","כל החתולים אוהבים","אף כלב לא אוהב","יש כלב שאוהב"],c:0,
+   e:"כדי לסתור \"כל\" מספיק דוגמה אחת נגדית!\n\"יש כלב שלא\" = מספיק אחד! 🐕"},
+  {id:"l3",topic:"logic",d:2,q:"5 ילדים בשורה: ירון לפני מיכל, מיכל לפני עומר, עומר לפני נועה, נועה לפני גיל. מי באמצע?",o:["עומר","מיכל","ירון","נועה"],c:0,
+   e:"ירון, מיכל, עומר, נועה, גיל\nמספר 3 = עומר! 🎯"},
+  {id:"l4",topic:"logic",d:2,q:"בניין 4 קומות. רוני מעל שירה ומתחת לדנה. גלית בקומה 1. באיזו קומה דנה?",o:["4","3","2","אי אפשר לדעת"],c:0,
+   e:"🏠 קומה 1: גלית\n🏠 קומה 2: שירה\n🏠 קומה 3: רוני\n🏠 קומה 4: דנה! 🏢"},
+  {id:"l5",topic:"logic",d:2,q:"3⊕2=8, 5⊕1=11, 4⊕3=11.\nמהי הפעולה ⊕?",o:["a + b²","2a + b","a² − b","a × b + 2"],c:1,
+   e:"נבדוק 2a+b:\n3⊕2: 6+2=8 ✅\n5⊕1: 10+1=11 ✅\n4⊕3: 8+3=11 ✅ 🔍"},
+  {id:"l6",topic:"logic",d:3,q:"A>B, C<B, D>A, E<C.\nמי הכי קטן?",o:["E","C","B","A"],c:0,
+   e:"מגדול לקטן:\nD > A > B > C > E\nE הכי קטן! 📉"},
+  {id:"l7",topic:"logic",d:1,q:"יש לי 6 גרביים שחורים ו-4 לבנים במגירה חשוכה. כמה גרביים צריך להוציא כדי לוודא זוג תואם?",o:["3","2","5","7"],c:0,
+   e:"במקרה הגרוע: גרב שחור + גרב לבן\nהשלישי בהכרח יתאים לאחד!\n3 גרביים = בטוח זוג 🧦"},
+  {id:"l8",topic:"logic",d:3,q:"בתחרות, כל שניים מתוך 5 שחקנים שיחקו משחק אחד. כמה משחקים בסה\"כ?",o:["10","15","20","5"],c:0,
+   e:"כל שחקן משחק נגד 4 אחרים\n5×4 = 20, אבל כל משחק נספר פעמיים!\n20÷2 = 10 משחקים 🏆"},
+];
+
+// ─────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────
+const STORAGE_KEY = "brawl-brain-v1";
+let state = {
+  name:"",
+  progress:null,     // {diagnosticDone, topicLevels, history, usedIds, totalCorrect, totalAnswered, bestStreak}
+  questions:[],
+  currentQ:0,
+  selectedAnswer:null,
+  showExplanation:false,
+  sessionResults:[],
+  streak:0,
+  qStartTime:0,
+  isDiagnostic:false,
+  remediationCount:{},  // topic -> # of wrong/IDK answers this session
+};
+
+function loadState(){
+  try{const r=localStorage.getItem(STORAGE_KEY);if(r)return JSON.parse(r)}catch{}
+  return null;
+}
+function saveState(){
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state.progress))}catch{}
+}
+
+// ─────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────
+function init(){
+  const saved = loadState();
+  if(saved && saved.diagnosticDone){
+    state.progress = saved;
+    state.name = saved.name || "";
+    document.getElementById("welcome-new").style.display="none";
+    document.getElementById("welcome-continue").style.display="block";
+  }
+  // Name input handler
+  const inp = document.getElementById("name-input");
+  const btn = document.getElementById("btn-go");
+  inp.addEventListener("input",()=>{btn.disabled=!inp.value.trim()});
+  inp.addEventListener("keydown",(e)=>{if(e.key==="Enter"&&inp.value.trim())startDiagnostic()});
+}
+
+// ─────────────────────────────────────────────────────────────
+// SCREEN MANAGEMENT
+// ─────────────────────────────────────────────────────────────
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById("screen-"+id).classList.add("active");
+  window.scrollTo(0,0);
+}
+
+// ─────────────────────────────────────────────────────────────
+// QUESTION SELECTION
+// ─────────────────────────────────────────────────────────────
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function getQs(topic,maxDiff,count,exclude){
+  const pool=Q.filter(q=>q.topic===topic&&q.d<=maxDiff&&!exclude.has(q.id));
+  return shuffle(pool).slice(0,count);
+}
+
+// ─────────────────────────────────────────────────────────────
+// START DIAGNOSTIC
+// ─────────────────────────────────────────────────────────────
+function startDiagnostic(){
+  const nameVal = document.getElementById("name-input").value.trim();
+  if(!nameVal)return;
+  state.name = nameVal;
+  state.isDiagnostic = true;
+  const used = new Set();
+  let qs = [];
+  for(const t of Object.keys(TOPICS)){
+    const tqs = getQs(t,2,2,used);
+    tqs.forEach(q=>used.add(q.id));
+    qs = qs.concat(tqs);
+  }
+  qs = shuffle(qs);
+  state.questions = qs;
+  state.currentQ = 0;
+  state.sessionResults = [];
+  state.selectedAnswer = null;
+  state.showExplanation = false;
+  state.streak = 0;
+  state.qStartTime = Date.now();
+  state.remediationCount = {};
+  showScreen("quiz");
+  renderQuiz();
+}
+
+// ─────────────────────────────────────────────────────────────
+// START DAILY QUIZ
+// ─────────────────────────────────────────────────────────────
+function startDailyQuiz(){
+  const p = state.progress;
+  if(!p)return;
+  state.name = p.name || state.name;
+  state.isDiagnostic = false;
+  const used = new Set(p.usedIds||[]);
+  let qs = [];
+  const topicKeys = Object.keys(p.topicLevels||{});
+  // Sort by weakness
+  const sorted = [...topicKeys].sort((a,b)=>(p.topicLevels[a]||1)-(p.topicLevels[b]||1));
+  
+  // Distribute: 2 weakest, 1 each next
+  let plan = {};
+  if(sorted.length>=5){
+    plan[sorted[0]]=2;plan[sorted[1]]=1;plan[sorted[2]]=1;plan[sorted[3]]=1;
+  } else {
+    let rem=5;
+    for(const t of sorted){
+      const c=Math.ceil(rem/(sorted.length-Object.keys(plan).length));
+      plan[t]=Math.min(c,rem);rem-=plan[t];if(rem<=0)break;
+    }
+  }
+
+  for(const[topic,count] of Object.entries(plan)){
+    const lvl = p.topicLevels[topic]||1;
+    let tqs = getQs(topic,lvl,count,used);
+    if(tqs.length<count) tqs = getQs(topic,lvl,count,new Set());
+    tqs.forEach(q=>used.add(q.id));
+    qs = qs.concat(tqs);
+  }
+  // Fill to 5
+  while(qs.length<5){
+    const rem=Q.filter(q=>!used.has(q.id));
+    if(!rem.length)break;
+    const pick=rem[Math.floor(Math.random()*rem.length)];
+    qs.push(pick);used.add(pick.id);
+  }
+  qs = shuffle(qs);
+  state.questions = qs;
+  state.currentQ = 0;
+  state.sessionResults = [];
+  state.selectedAnswer = null;
+  state.showExplanation = false;
+  state.streak = 0;
+  state.qStartTime = Date.now();
+  state.remediationCount = {};
+  if(state.progress) state.progress.usedIds = Array.from(used);
+  showScreen("quiz");
+  renderQuiz();
+}
+
+// ─────────────────────────────────────────────────────────────
+// GEOMETRY DIAGRAMS (SVG)
+// ─────────────────────────────────────────────────────────────
+const SC={
+  gold:(a)=>`rgba(245,158,11,${a})`,
+  pink:(a)=>`rgba(232,93,117,${a})`,
+  pur: (a)=>`rgba(139,92,246,${a})`,
+  grn: (a)=>`rgba(16,185,129,${a})`,
+  str: 'rgba(255,255,255,0.82)',
+  dim: 'rgba(255,255,255,0.65)',
+  bg:  'rgba(255,255,255,0.05)'
+};
+function _poly(pts,fill,sw=2.5){
+  return `<polygon points="${pts.map(p=>p[0]+','+p[1]).join(' ')}" fill="${fill}" stroke="${SC.str}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+}
+function _rect(x,y,w,h,fill,sw=2.5){
+  return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${SC.str}" stroke-width="${sw}" rx="2"/>`;
+}
+function _txt(x,y,t,fill,sz=12,anchor='middle',bold=0){
+  return `<text x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-family="Rubik,sans-serif" font-size="${sz}"${bold?' font-weight="700"':''}>${t}</text>`;
+}
+function _line(x1,y1,x2,y2,clr,sw=2){
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${clr}" stroke-width="${sw}"/>`;
+}
+function _svg(body,w,h){
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" style="display:block;margin:0 auto;direction:ltr">${body}</svg>`;
+}
+
+function dSquare(side,ex){
+  const S=100,ox=46,oy=18;
+  let b=_rect(ox,oy,S,S,ex?SC.grn(0.28):SC.bg);
+  b+=_txt(ox+S/2,oy+S+18,''+side,SC.dim,13);
+  const lx=ox-18, ly=oy+S/2;
+  b+=`<text x="${lx}" y="${ly+5}" text-anchor="middle" fill="${SC.dim}" font-family="Rubik,sans-serif" font-size="13" transform="rotate(-90,${lx},${ly})">${side}</text>`;
+  if(ex) b+=_txt(ox+S/2,oy+S/2+5,'4 × '+side,SC.grn(0.95),13,'middle',1);
+  return _svg(b,200,148);
+}
+
+function dRect(w,h,ex){
+  const sc=Math.min(145/w,90/h,18);
+  const rw=Math.round(w*sc),rh=Math.round(h*sc);
+  const ox=Math.round((200-rw)/2),oy=18;
+  let b=_rect(ox,oy,rw,rh,ex?SC.grn(0.28):SC.bg);
+  b+=_txt(ox+rw/2,oy+rh+18,''+w,SC.dim,13);
+  const lx=ox-18, ly=oy+rh/2;
+  b+=`<text x="${lx}" y="${ly+5}" text-anchor="middle" fill="${SC.dim}" font-family="Rubik,sans-serif" font-size="13" transform="rotate(-90,${lx},${ly})">${h}</text>`;
+  if(ex) b+=_txt(ox+rw/2,oy+rh/2+5,''+w+'×'+h,SC.grn(0.95),13,'middle',1);
+  return _svg(b,200,oy+rh+32);
+}
+
+function dTriangle(base,height,ex){
+  const sc=Math.min(120/base,90/height,13);
+  const bw=Math.round(base*sc),bh=Math.round(height*sc);
+  const ox=45,oy=15;
+  let b='';
+  if(ex){
+    b+=_rect(ox,oy,bw,bh,SC.pur(0.1),0);
+    b+=`<rect x="${ox}" y="${oy}" width="${bw}" height="${bh}" fill="none" stroke="${SC.pur(0.38)}" stroke-width="1.5" stroke-dasharray="5,3" rx="2"/>`;
+    b+=_txt(ox+bw*0.75,oy+bh*0.28,'÷2',SC.pur(0.8),11,'middle',1);
+  }
+  b+=_poly([[ox,oy+bh],[ox+bw,oy+bh],[ox,oy]],ex?SC.grn(0.38):SC.bg);
+  b+=`<path d="M${ox+12} ${oy+bh} v-12 h12" fill="none" stroke="${SC.str}" stroke-width="1.5"/>`;
+  b+=_txt(ox+bw/2,oy+bh+18,''+base,SC.dim,13);
+  b+=_txt(ox-16,oy+bh/2+5,''+height,SC.dim,13);
+  return _svg(b,ox+bw+32,oy+bh+32);
+}
+
+function dCube(ex){
+  const s=55,hw=Math.round(s*0.866),hh=Math.round(s*0.5);
+  const cx=105,ty=22;
+  const T=[cx,ty],TL=[cx-hw,ty+hh],TR=[cx+hw,ty+hh];
+  const M=[cx,ty+s],BL=[cx-hw,ty+hh+s],BC=[cx,ty+s*2],BR=[cx+hw,ty+hh+s];
+  let b='';
+  b+=_poly([T,TR,M,TL],ex?SC.gold(0.55):SC.bg);   // top face - gold
+  b+=_poly([TL,M,BC,BL],ex?SC.pink(0.55):SC.bg);  // left face - pink
+  b+=_poly([TR,BR,BC,M],ex?SC.pur(0.55):SC.bg);   // right face - purple
+  if(ex){
+    // Label each face with s×s to show it's a square face
+    b+=_txt(cx,ty+hh+s*0.45,'s×s',SC.gold(0.95),10,'middle',1);
+    b+=_txt(cx-hw*0.52,ty+hh+s*0.85,'s×s',SC.pink(0.95),10,'middle',1);
+    b+=_txt(cx+hw*0.52,ty+hh+s*0.85,'s×s',SC.pur(0.95),10,'middle',1);
+  }
+  return _svg(b,210,ty+s*2+18);
+}
+
+function dBox(w,h,d,ex){
+  const sc=Math.min(130/w,90/h,55/d,16);
+  const W=Math.round(w*sc),H=Math.round(h*sc),D=Math.round(d*sc);
+  const dx=Math.round(D*0.866),dy=Math.round(D*0.5);
+  const ox=32,oy=22;
+  const FL=[ox,oy+dy+H],FR=[ox+W,oy+dy+H];
+  const FTL=[ox,oy+dy],FTR=[ox+W,oy+dy];
+  const BL=[ox+dx,oy],BR=[ox+W+dx,oy];
+  const SBR=[ox+W+dx,oy+H];
+  let b='';
+  b+=_poly([FTL,FTR,BR,BL],ex?SC.gold(0.55):SC.bg);    // top  - gold
+  b+=_poly([FL,FR,FTR,FTL],ex?SC.pink(0.55):SC.bg);    // front - pink
+  b+=_poly([FR,SBR,BR,FTR],ex?SC.pur(0.55):SC.bg);     // right - purple
+  if(ex){
+    b+=_txt(ox+W/2,oy+dy+H/2+5,''+w+'×'+h,SC.pink(0.95),11,'middle',1);
+    b+=_txt(ox+W/2+dx/2,oy+dy/2+8,''+w+'×'+d,SC.gold(0.95),11,'middle',1);
+    b+=_txt(ox+W+dx/2+4,oy+dy+H/2+5,''+d+'×'+h,SC.pur(0.95),11,'middle',1);
+  } else {
+    b+=_txt(ox+W/2,oy+dy+H+17,''+w,SC.dim,11);
+    b+=_txt(ox-14,oy+dy+H/2+5,''+h,SC.dim,11);
+    b+=_txt(ox+W+dx/2+7,oy+dy/2+5,''+d,SC.dim,11);
+  }
+  return _svg(b,ox+W+dx+28,oy+dy+H+26);
+}
+
+function dSquareTri(side,ex){
+  const sc=Math.min(10,100/side);
+  const S=Math.round(side*sc);
+  const th=Math.round(S*Math.sqrt(3)/2);
+  const ox=30,oy=12;
+  const SBL=[ox,oy+th+S],SBR=[ox+S,oy+th+S];
+  const STL=[ox,oy+th],STR=[ox+S,oy+th];
+  const AP=[ox+S/2,oy];
+  let b='';
+  if(ex){
+    // dashed shared edge (not counted in perimeter)
+    b+=`<line x1="${ox}" y1="${oy+th}" x2="${ox+S}" y2="${oy+th}" stroke="rgba(255,255,255,0.18)" stroke-width="2.5" stroke-dasharray="7,4"/>`;
+    b+=_poly([STL,STR,AP],SC.gold(0.4));
+    b+=_poly([SBL,SBR,STR,STL],SC.pur(0.3));
+    // Highlight the 5 outer sides in green
+    [[AP,STL],[AP,STR],[STL,SBL],[SBL,SBR],[SBR,STR]].forEach(([a,p])=>{
+      b+=_line(a[0],a[1],p[0],p[1],SC.grn(0.9),3.5);
+    });
+  } else {
+    b+=_poly([STL,STR,AP],SC.gold(0.15));
+    b+=_poly([SBL,SBR,STR,STL],SC.pur(0.12));
+  }
+  return _svg(b,ox+S+22,oy+th+S+18);
+}
+
+function dNested(outer,inner,ex){
+  const sc=Math.min(15,120/outer);
+  const OS=Math.round(outer*sc),IS=Math.round(inner*sc);
+  const m=Math.round((OS-IS)/2);
+  const ox=28,oy=18;
+  let b='';
+  if(ex){
+    b+=_rect(ox,oy,OS,OS,SC.pink(0.38));
+    b+=`<rect x="${ox+m}" y="${oy+m}" width="${IS}" height="${IS}" fill="rgba(18,12,50,0.92)" stroke="${SC.str}" stroke-width="2.5" rx="2"/>`;
+    b+=_txt(ox+OS/2,oy+m*0.5+9,''+outer+'²='+(outer*outer),SC.pink(0.9),11,'middle',1);
+    b+=_txt(ox+OS/2,oy+m+IS/2+5,''+inner+'²='+(inner*inner),'rgba(255,255,255,0.4)',11);
+  } else {
+    b+=_rect(ox,oy,OS,OS,SC.bg);
+    b+=_rect(ox+m,oy+m,IS,IS,SC.bg);
+    b+=_txt(ox+OS+14,oy+OS/2+5,''+outer,SC.dim,11);
+    b+=_txt(ox+OS/2,oy+OS+16,''+outer,SC.dim,11);
+  }
+  return _svg(b,ox+OS+28,oy+OS+28);
+}
+
+function makeDiagram(shape,isExpl){
+  if(!shape) return '';
+  try{
+    const d=shape.d||[];
+    switch(shape.type){
+      case 'square':          return dSquare(d[0],isExpl);
+      case 'rect':            return dRect(d[0],d[1],isExpl);
+      case 'triangle':        return dTriangle(d[0],d[1],isExpl);
+      case 'cube':            return dCube(isExpl);
+      case 'box':             return dBox(d[0],d[1],d[2],isExpl);
+      case 'square_triangle': return dSquareTri(d[0],isExpl);
+      case 'nested_squares':  return dNested(d[0],d[1],isExpl);
+    }
+  }catch(e){}
+  return '';
+}
+
+// ─────────────────────────────────────────────────────────────
+// BIDI / TEXT HELPERS
+// ─────────────────────────────────────────────────────────────
+function escHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+const HAS_NUM = /[¼½¾⅐⅑⅒⅓⅔⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞\d]/;
+
+// For QUESTION TEXT: Hebrew prefix stays on its own line, math expression goes below
+// (avoids all BiDi issues — each line is cleanly one direction)
+function renderText(text){
+  return text.split('\n').map(line=>{
+    const esc = escHtml(line);
+    if(!HAS_NUM.test(line)) return esc;
+    const hasHe = /[\u05D0-\u05EA]/.test(line);
+    if(!hasHe) return '<span dir="ltr">'+esc.trim()+'</span>';
+    // Line starts with math (not Hebrew) — wrap entire line LTR to preserve order
+    if(!/^\s*[\u05D0-\u05EA]/.test(line)) return '<span dir="ltr">'+esc+'</span>';
+    // Hebrew prefix + math suffix — put math on a new line
+    let lastHe=-1;
+    for(let i=esc.length-1;i>=0;i--){
+      const c=esc.charCodeAt(i);
+      if(c>=0x05D0&&c<=0x05EA){lastHe=i;break;}
+    }
+    if(lastHe<0) return esc;
+    const after=esc.slice(lastHe+1);
+    if(!HAS_NUM.test(after)) return esc; // numbers mid-sentence, no split
+    const math=after.replace(/^[\s:]+/,'').trim();
+    if(!math) return esc;
+    return esc.slice(0,lastHe+1)+'<br><span dir="ltr">'+math+'</span>';
+  }).join('<br>');
+}
+
+// For EXPLANATION TEXT: render the whole block LTR, wrap Hebrew word-runs in <bdi dir="rtl">
+// This keeps math operators/numbers in natural LTR order and aligns = signs cleanly,
+// while Hebrew words still render correctly within their isolated bdi spans.
+// Hebrew run: a Hebrew char optionally followed by groups of (quotes/space + Hebrew char)
+const HE_RUN = /([\u05D0-\u05EA](?:["'״׳\s]*[\u05D0-\u05EA])*)/g;
+function renderExpl(text){
+  const lines = text.split('\n').map(line=>{
+    const esc = escHtml(line);
+    const hasNum = HAS_NUM.test(line);
+    const hasHe  = /[\u05D0-\u05EA]/.test(line);
+    if(!hasNum){
+      // Pure Hebrew/text label — RTL right-aligned
+      return `<div style="direction:rtl;text-align:right;margin:0">${esc}</div>`;
+    }
+    if(!hasHe){
+      // Pure math — LTR left-aligned
+      return `<div style="margin:0">${esc}</div>`;
+    }
+    // Mixed: wrap each Hebrew word-run in <bdi dir="rtl">, rest stays LTR
+    const wrapped = esc.replace(HE_RUN, he=>`<bdi dir="rtl">${he}</bdi>`);
+    return `<div style="margin:0">${wrapped}</div>`;
+  });
+  return `<div style="direction:ltr;text-align:left">${lines.join('')}</div>`;
+}
+
+// ─────────────────────────────────────────────────────────────
+// RENDER QUIZ
+// ─────────────────────────────────────────────────────────────
+function renderQuiz(){
+  const q = state.questions[state.currentQ];
+  const info = TOPICS[q.topic];
+  const num = state.currentQ+1;
+  const total = state.questions.length;
+  const pct = (num/total)*100;
+
+  document.getElementById("quiz-player-name").textContent = state.name+" 👋";
+  document.getElementById("quiz-counter").textContent = "שאלה "+num+" מתוך "+total;
+  document.getElementById("prog-fill").style.width = pct+"%";
+
+  const sb = document.getElementById("streak-badge");
+  if(state.streak>=2){sb.style.display="inline-block";sb.textContent="🔥 "+state.streak+" ברצף!"}
+  else sb.style.display="none";
+
+  const tb = document.getElementById("topic-badge");
+  tb.style.background = info.color+"22";
+  tb.style.color = info.color;
+  tb.innerHTML = info.icon+" "+info.name+(state.isDiagnostic?' <span class="diag-tag">· מבחן אבחון</span>':'');
+
+  // Remediation badge + optional tip
+  const remedTip = document.getElementById("remed-tip");
+  if(q._remedLevel){
+    const labels1 = ['🔄 שאלת תרגול נוספת','🎯 שאלת חיזוק אחרונה'];
+    const badgeText = labels1[Math.min(q._remedLevel-1, 1)];
+    let tipHtml = `<div class="remed-badge">${badgeText}</div>`;
+    if(q._remedLevel >= 2 && q._prevExpl){
+      tipHtml += `<div class="remed-tip"><div class="remed-tip-title">💡 תזכורת מהשאלה הקודמת:</div><div>${renderExpl(q._prevExpl)}</div></div>`;
+    }
+    remedTip.innerHTML = tipHtml;
+  } else {
+    remedTip.innerHTML = '';
+  }
+
+  document.getElementById("q-text").innerHTML = renderText(q.q);
+  // Add topic class so fractions can get larger font
+  document.querySelector('.q-card').className = 'q-card' + (q.topic==='fractions'?' topic-fractions':'');
+  // Show geometry diagram next to the question
+  document.getElementById("q-diagram").innerHTML = q.shape ? makeDiagram(q.shape, false) : '';
+
+  const labels = ["א","ב","ג","ד"];
+  const container = document.getElementById("opts-container");
+  container.innerHTML = "";
+  q.o.forEach((opt,i)=>{
+    const btn = document.createElement("button");
+    btn.className = "opt-btn";
+    // Options with no Hebrew (pure math/numbers) must render LTR to preserve order
+    const optDir = /[א-ת]/.test(opt) ? 'rtl' : 'ltr';
+    btn.innerHTML = '<span class="opt-lbl">'+labels[i]+'</span><span class="opt-txt" dir="'+optDir+'">'+escHtml(opt)+'</span>';
+    btn.onclick = ()=>handleAnswer(i);
+    container.appendChild(btn);
+  });
+
+  // "I don't know" option
+  const idkBtn = document.createElement("button");
+  idkBtn.id = "btn-idk";
+  idkBtn.className = "opt-btn opt-idk";
+  idkBtn.innerHTML = '<span class="opt-lbl">?</span><span class="opt-txt" dir="rtl">לא יודע / לא יודעת 🤔</span>';
+  idkBtn.onclick = ()=>handleAnswer('idk');
+  container.appendChild(idkBtn);
+
+  document.getElementById("feedback-area").innerHTML = "";
+}
+
+// ─────────────────────────────────────────────────────────────
+// HANDLE ANSWER
+// ─────────────────────────────────────────────────────────────
+function handleAnswer(idx){
+  if(state.selectedAnswer!==null)return;
+  const isIDK = idx==='idk';
+  state.selectedAnswer = isIDK ? -1 : idx;
+  const q = state.questions[state.currentQ];
+  const timeSpent = (Date.now()-state.qStartTime)/1000;
+  const isCorrect = !isIDK && idx===q.c;
+
+  state.sessionResults.push({qId:q.id,topic:q.topic,correct:isCorrect,time:timeSpent,d:q.d});
+
+  if(isCorrect){
+    state.streak++;
+    fireConfetti();
+    state.remediationCount[q.topic] = 0;  // reset on correct
+  } else {
+    state.streak = 0;
+    // Adaptive remediation: inject extra question from same topic
+    if(!state.isDiagnostic){
+      const topic = q.topic;
+      const rc = (state.remediationCount[topic]||0) + 1;
+      state.remediationCount[topic] = rc;
+      if(rc <= 2){
+        const usedIds = new Set(state.questions.map(sq=>sq.id));
+        const pool = Q.filter(sq=>sq.topic===topic && !usedIds.has(sq.id));
+        if(pool.length > 0){
+          const pick = pool[Math.floor(Math.random()*pool.length)];
+          // Splice the extra question immediately after the current one
+          state.questions.splice(state.currentQ+1, 0,
+            Object.assign({}, pick, {
+              _remedLevel: rc,
+              _prevExpl: rc >= 2 ? q.e : null
+            })
+          );
+        }
+      }
+    }
+  }
+
+  // Disable IDK button
+  const idkBtn = document.getElementById("btn-idk");
+  if(idkBtn) idkBtn.disabled = true;
+
+  // Update option styles
+  const btns = document.querySelectorAll("#opts-container .opt-btn:not(.opt-idk)");
+  btns.forEach((btn,i)=>{
+    btn.disabled = true;
+    if(i===q.c){
+      btn.classList.add("correct");
+      btn.innerHTML += '<span class="opt-mark" style="color:#10B981">✓</span>';
+    } else if(i===idx && !isCorrect && !isIDK){
+      btn.classList.add("wrong");
+      btn.classList.add("shake");
+      btn.innerHTML += '<span class="opt-mark" style="color:#EF4444">✗</span>';
+    } else {
+      btn.classList.add("dimmed");
+    }
+  });
+
+  // Streak badge
+  const sb = document.getElementById("streak-badge");
+  if(state.streak>=2){sb.style.display="inline-block";sb.textContent="🔥 "+state.streak+" ברצף!";}
+
+  // Show feedback
+  setTimeout(()=>{
+    const num = state.currentQ+1;
+    const total = state.questions.length;
+    const isLast = num>=total;
+    const fb = document.getElementById("feedback-area");
+
+    const rc = state.remediationCount[q.topic]||0;
+    // Was a remediation question injected for this wrong answer?
+    const injected = !isCorrect && !state.isDiagnostic && rc >= 1 && rc <= 2
+      && state.questions[state.currentQ+1]?._remedLevel === rc;
+
+    let cardClass, headerHtml;
+    if(isIDK){
+      cardClass = 'idk';
+      headerHtml = '<span class="fb-idk">🤔 אין בעיה! בואו נלמד את הפתרון:</span>';
+      if(injected) headerHtml += '<div class="fb-remed-hint">🔄 יש עוד שאלה אחת על אותו נושא — נסה להפעיל את מה שלמדנו!</div>';
+    } else if(isCorrect){
+      cardClass = 'ok';
+      headerHtml = '<span class="fb-ok">🎉 מעולה! צדקת!</span>';
+    } else {
+      cardClass = 'no';
+      const ansDir = /[א-ת]/.test(q.o[q.c]) ? '' : ' dir="ltr"';
+      const ansSpan = '<span'+ansDir+'>'+escHtml(q.o[q.c])+'</span>';
+      if(rc >= 3){
+        headerHtml = '<span class="fb-no">💪 שאלה קשה! התשובה: '+ansSpan+'</span>';
+      } else if(rc === 2){
+        headerHtml = '<span class="fb-no">😔 כמעט! התשובה: '+ansSpan+'</span>'
+          +'<div class="fb-remed-hint">🎯 שאלת חיזוק אחרונה — יש לך תזכורת ממש לפניה!</div>';
+      } else {
+        headerHtml = '<span class="fb-no">😔 לא נכון... התשובה: '+ansSpan+'</span>';
+        if(injected) headerHtml += '<div class="fb-remed-hint">🔄 יש עוד שאלה אחת על אותו נושא</div>';
+      }
+    }
+
+    let nextBtnLabel = isLast ? '📊 סיכום' : '→ לשאלה הבאה';
+    if(injected && rc===1) nextBtnLabel = '🔄 לשאלת תרגול';
+    if(injected && rc===2) nextBtnLabel = '🎯 לשאלת חיזוק';
+
+    fb.innerHTML = `
+      <div class="fb-card ${cardClass}">
+        <div class="fb-header">${headerHtml}</div>
+        <div class="expl-box">
+          <div class="expl-title">💡 הפתרון:</div>
+          ${q.shape?'<div class="expl-diagram">'+makeDiagram(q.shape,true)+'</div>':''}
+          <div class="expl-text">${renderExpl(q.e)}</div>
+        </div>
+        <button class="btn-next" onclick="nextQuestion()">${nextBtnLabel}</button>
+      </div>
+    `;
+  },500);
+}
+
+// ─────────────────────────────────────────────────────────────
+// NEXT QUESTION
+// ─────────────────────────────────────────────────────────────
+function nextQuestion(){
+  if(state.currentQ < state.questions.length-1){
+    state.currentQ++;
+    state.selectedAnswer = null;
+    state.showExplanation = false;
+    state.qStartTime = Date.now();
+    showScreen("quiz");
+    renderQuiz();
+  } else {
+    finishSession();
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// FINISH SESSION
+// ─────────────────────────────────────────────────────────────
+function finishSession(){
+  const byTopic = {};
+  for(const r of state.sessionResults){
+    if(!byTopic[r.topic])byTopic[r.topic]={correct:0,total:0,time:0};
+    byTopic[r.topic].total++;
+    byTopic[r.topic].time+=r.time;
+    if(r.correct)byTopic[r.topic].correct++;
+  }
+  const totalCorrect = state.sessionResults.filter(r=>r.correct).length;
+
+  if(state.isDiagnostic){
+    const topicLevels={};
+    for(const[t,d] of Object.entries(byTopic)){
+      const avg=d.time/d.total;
+      if(d.correct===d.total && avg<30) topicLevels[t]=3;
+      else if(d.correct>=d.total*0.5) topicLevels[t]=2;
+      else topicLevels[t]=1;
+    }
+    for(const t of Object.keys(TOPICS)) if(!topicLevels[t]) topicLevels[t]=1;
+    state.progress = {
+      name:state.name,diagnosticDone:true,topicLevels,
+      history:[{date:new Date().toISOString(),results:state.sessionResults}],
+      usedIds:state.questions.map(q=>q.id),
+      totalCorrect,totalAnswered:state.sessionResults.length,
+      bestStreak:state.streak
+    };
+  } else {
+    const p = state.progress;
+    for(const[t,d] of Object.entries(byTopic)){
+      const rate=d.correct/d.total;
+      if(rate>=0.8&&totalCorrect>=4) p.topicLevels[t]=Math.min(3,(p.topicLevels[t]||1)+1);
+      else if(rate<0.5) p.topicLevels[t]=Math.max(1,(p.topicLevels[t]||1)-1);
+    }
+    p.history.push({date:new Date().toISOString(),results:state.sessionResults});
+    p.totalCorrect=(p.totalCorrect||0)+totalCorrect;
+    p.totalAnswered=(p.totalAnswered||0)+state.sessionResults.length;
+    p.bestStreak=Math.max(p.bestStreak||0,state.streak);
+  }
+  saveState();
+  showScreen("results");
+  renderResults();
+}
+
+// ─────────────────────────────────────────────────────────────
+// RENDER RESULTS
+// ─────────────────────────────────────────────────────────────
+function renderResults(){
+  const res = state.sessionResults;
+  const correct = res.filter(r=>r.correct).length;
+  const total = res.length;
+  const pct = Math.round((correct/total)*100);
+  const p = state.progress;
+
+  const byTopic={};
+  for(const r of res){
+    if(!byTopic[r.topic])byTopic[r.topic]={correct:0,total:0};
+    byTopic[r.topic].total++;
+    if(r.correct)byTopic[r.topic].correct++;
+  }
+
+  const emoji = pct>=80?"🏆":pct>=60?"💪":pct>=40?"📚":"🌱";
+  const msg = pct>=80?"!מוח בראול אמיתי":pct>=60?"!יפה מאוד, ממשיכים":pct>=40?"לא רע! בוא נתרגל עוד":"אל דאגה, תרגול עושה מושלם!";
+
+  let topicHTML = "";
+  for(const[topic,data] of Object.entries(byTopic)){
+    const info=TOPICS[topic];
+    const tpct=Math.round((data.correct/data.total)*100);
+    const lvl=p.topicLevels[topic]||1;
+    const barColor=tpct>=80?"#10B981":tpct>=50?"#F59E0B":"#EF4444";
+    topicHTML+=`
+      <div class="topic-row" onclick="showReview('${topic}')">
+        <div class="tr-left">${info.icon} ${info.name}</div>
+        <div class="tr-right">
+          <div class="tr-bar-bg"><div class="tr-bar-fill" style="width:${tpct}%;background:${barColor}"></div></div>
+          <span class="tr-score">${data.correct}/${data.total}</span>
+          <span class="lvl-badge">רמה ${lvl}</span>
+        </div>
+      </div>`;
+  }
+
+  let statsHTML = "";
+  if(!state.isDiagnostic && p){
+    statsHTML=`
+      <div class="stats-row">
+        <div class="stat-item"><div class="stat-num">${p.totalCorrect||0}</div><div class="stat-lbl">תשובות נכונות</div></div>
+        <div class="stat-item"><div class="stat-num">${p.bestStreak||0}</div><div class="stat-lbl">🔥 שיא ברצף</div></div>
+        <div class="stat-item"><div class="stat-num">${(p.history||[]).length}</div><div class="stat-lbl">ימי תרגול</div></div>
+      </div>`;
+  }
+
+  const encourageText = state.isDiagnostic
+    ? "המערכת תתאים את השאלות לרמה שלך — אל דאגה!"
+    : "הנושאים החלשים יקבלו יותר תרגול בפעם הבאה 🎯";
+
+  document.getElementById("results-content").innerHTML=`
+    <div class="res-emoji">${emoji}</div>
+    <h2 class="res-title">${state.isDiagnostic?"סיימנו את מבחן האבחון!":state.name+", הנה הסיכום!"}</h2>
+    <p class="res-msg">${msg}</p>
+    <div class="score-circle">
+      <div class="score-num">${correct}/${total}</div>
+      <div class="score-pct">${pct}%</div>
+    </div>
+    <div class="breakdown">
+      <h3 class="breakdown-title">📊 לפי נושא:</h3>
+      ${topicHTML}
+    </div>
+    ${statsHTML}
+    <button class="btn-start" onclick="startDailyQuiz()">${state.isDiagnostic?"🎯 מתחילים לתרגל!":"💪 עוד סיבוב!"}</button>
+    ${correct<total?'<p class="encourage">'+encourageText+'</p>':''}
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// REVIEW SCREEN
+// ─────────────────────────────────────────────────────────────
+function showReview(topic){
+  const info = TOPICS[topic];
+  const topicResults = state.sessionResults.filter(r=>r.topic===topic);
+  const topicQs = state.questions.filter(q=>q.topic===topic);
+
+  let html = `
+    <button class="btn-back" onclick="showScreen('results');renderResults()">→ חזרה לסיכום</button>
+    <h2 class="rev-title" style="color:${info.color}">${info.icon} ${info.name} — סקירה</h2>`;
+
+  topicQs.forEach((q,i)=>{
+    const r = topicResults[i];
+    const borderColor = r&&r.correct?"#10B981":"#EF4444";
+    const ansDir = /[א-ת]/.test(q.o[q.c])?'':' dir="ltr"';
+    const resultText = r&&r.correct
+      ? '<div class="rev-res" style="color:#10B981">✅ נכון</div>'
+      : '<div class="rev-res" style="color:#EF4444">❌ טעית · התשובה: <span'+ansDir+'>'+escHtml(q.o[q.c])+'</span></div>';
+    const diagram = q.shape?'<div class="expl-diagram">'+makeDiagram(q.shape,true)+'</div>':'';
+    html += `
+      <div class="rev-card" style="border-right-color:${borderColor}">
+        <p class="rev-q">${renderText(q.q)}</p>
+        ${resultText}
+        ${diagram}
+        <div class="rev-expl">${renderExpl(q.e)}</div>
+      </div>`;
+  });
+
+  html += '<button class="btn-back" onclick="showScreen(\'results\');renderResults()">→ חזרה לסיכום</button>';
+  document.getElementById("review-content").innerHTML = html;
+  showScreen("review");
+}
+
+// ─────────────────────────────────────────────────────────────
+// RESET
+// ─────────────────────────────────────────────────────────────
+function resetAll(){
+  if(!confirm("בטוח? כל ההתקדמות תימחק"))return;
+  localStorage.removeItem(STORAGE_KEY);
+  state.progress=null;state.name="";
+  document.getElementById("welcome-new").style.display="block";
+  document.getElementById("welcome-continue").style.display="none";
+  document.getElementById("name-input").value="";
+  document.getElementById("btn-go").disabled=true;
+  showScreen("welcome");
+}
+
+// ─────────────────────────────────────────────────────────────
+// CONFETTI
+// ─────────────────────────────────────────────────────────────
+function fireConfetti(){
+  const c=document.getElementById("confetti-container");
+  const colors=["#E85D75","#F59E0B","#8B5CF6","#10B981","#3B82F6","#EC4899"];
+  for(let i=0;i<25;i++){
+    const p=document.createElement("div");
+    p.className="confetti-piece";
+    p.style.left=Math.random()*100+"%";
+    p.style.width=(6+Math.random()*8)+"px";
+    p.style.height=p.style.width;
+    p.style.borderRadius=Math.random()>.5?"50%":"2px";
+    p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    p.style.animation=`confetti-fall ${1.5+Math.random()*2}s ease-in forwards`;
+    p.style.animationDelay=Math.random()*0.4+"s";
+    c.appendChild(p);
+    setTimeout(()=>p.remove(),4000);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// GO
+// ─────────────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>
