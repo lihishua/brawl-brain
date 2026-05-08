@@ -175,6 +175,49 @@ input{font-family:'Rubik',sans-serif}
 .shape-diagram{text-align:center;margin:14px 0 2px;opacity:.93}
 .expl-diagram{text-align:center;margin:10px 0 8px}
 
+/* ── Parent Dashboard ── */
+.btn-progress{width:100%;margin-top:10px;padding:14px 20px;border-radius:14px;border:2px solid rgba(139,92,246,.45);background:rgba(139,92,246,.12);color:rgba(255,255,255,.85);font-size:17px;font-weight:600;transition:transform .12s}
+.btn-progress:active{transform:scale(.97)}
+.par-wrap{max-width:560px;margin:0 auto;padding:20px 16px;animation:float-in .45s ease}
+.par-header{margin-bottom:20px}
+.par-title{font-size:22px;font-weight:700;margin-bottom:2px}
+.par-name{font-size:14px;color:rgba(255,255,255,.5)}
+.par-section{background:rgba(255,255,255,.06);border-radius:20px;padding:20px;margin-bottom:14px;border:1px solid rgba(255,255,255,.1)}
+.par-section-title{font-size:12px;font-weight:600;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
+.par-stats{display:flex;justify-content:space-around;text-align:center}
+.par-stat-num{font-size:26px;font-weight:800;color:#F59E0B}
+.par-stat-lbl{font-size:11px;color:rgba(255,255,255,.45);margin-top:3px}
+.topic-level-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.topic-level-row:last-child{border-bottom:none}
+.tl-left{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500}
+.tl-right{display:flex;align-items:center;gap:8px}
+.tl-dots{display:flex;gap:4px}
+.tl-dot{width:9px;height:9px;border-radius:50%}
+.tl-dot.tl-filled{opacity:1}
+.tl-dot.tl-empty{background:rgba(255,255,255,.15)!important}
+.tl-lvl{font-size:12px;color:rgba(255,255,255,.45);min-width:42px;text-align:right}
+.session-item{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.session-item:last-child{border-bottom:none}
+.session-hdr{display:flex;align-items:center;justify-content:space-between}
+.session-date{font-size:13px;color:rgba(255,255,255,.45)}
+.session-score{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600}
+.spct{font-size:13px;font-weight:600;padding:2px 8px;border-radius:8px}
+.spct.hi{background:rgba(16,185,129,.2);color:#10B981}
+.spct.mid{background:rgba(245,158,11,.2);color:#F59E0B}
+.spct.lo{background:rgba(239,68,68,.2);color:#EF4444}
+.session-qs{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.sq-row{display:flex;align-items:flex-start;gap:8px;font-size:13px;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,.04)}
+.sq-icon{font-size:13px;flex-shrink:0;margin-top:1px}
+.sq-text{flex:1;color:rgba(255,255,255,.65);line-height:1.4;text-align:right;direction:rtl;word-break:break-word}
+.sq-diff{font-size:10px;padding:1px 5px;border-radius:5px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.4);flex-shrink:0;align-self:flex-start;margin-top:2px}
+.sq-mark{font-size:14px;flex-shrink:0}
+.par-verbose{display:flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,255,255,.55);cursor:pointer;user-select:none;margin-bottom:14px;padding:2px 0}
+.vtoggle{width:38px;height:20px;border-radius:10px;background:rgba(255,255,255,.15);position:relative;transition:background .2s;flex-shrink:0}
+.vtoggle.von{background:#8B5CF6}
+.vtoggle-thumb{width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:2px;right:2px;transition:right .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.vtoggle.von .vtoggle-thumb{right:20px}
+.par-empty{text-align:center;padding:24px;color:rgba(255,255,255,.3);font-size:14px;line-height:1.6}
+
 /* Mobile tweaks */
 @media(max-width:400px){
   .welcome-card{padding:32px 20px}
@@ -209,10 +252,16 @@ input{font-family:'Rubik',sans-serif}
       </div>
       <div id="welcome-continue" style="display:none">
         <button class="btn-start" onclick="startDailyQuiz()">!ממשיכים לתרגל 💪</button>
+        <button class="btn-progress" onclick="showParentDashboard()">📊 הצג את ההתקדמות שלי</button>
         <button class="btn-reset" onclick="resetAll()">התחל מחדש</button>
       </div>
     </div>
   </div>
+</div>
+
+<!-- ═══════════════════ PARENT SCREEN ═══════════════════ -->
+<div id="screen-parent" class="screen">
+  <div class="par-wrap" id="parent-content"></div>
 </div>
 
 <!-- ═══════════════════ QUIZ SCREEN ═══════════════════ -->
@@ -249,6 +298,7 @@ input{font-family:'Rubik',sans-serif}
 <!-- ═══════════════════ CONFETTI CONTAINER ═══════════════════ -->
 <div id="confetti-container"></div>
 
+
 <script>
 // ─────────────────────────────────────────────────────────────
 // DATA
@@ -261,7 +311,9 @@ const TOPICS = {
   word_problems:{name:"בעיות מילוליות",icon:"📝",color:"#10B981"},
   geometry:{name:"גיאומטריה",icon:"📏",color:"#3B82F6"},
   sequences:{name:"סדרות ותבניות",icon:"🔮",color:"#EC4899"},
-  logic:{name:"חשיבה לוגית",icon:"🧩",color:"#06B6D4"}
+  logic:{name:"חשיבה לוגית",icon:"🧩",color:"#06B6D4"},
+  data:{name:"עיבוד נתונים",icon:"📊",color:"#0EA5E9"},
+  unknowns:{name:"נעלמים",icon:"🔡",color:"#84CC16"}
 };
 
 const Q = [
@@ -410,6 +462,151 @@ const Q = [
    e:"במקרה הגרוע: גרב שחור + גרב לבן\nהשלישי בהכרח יתאים לאחד!\n3 גרביים = בטוח זוג 🧦"},
   {id:"l8",topic:"logic",d:3,q:"בתחרות, כל שניים מתוך 5 שחקנים שיחקו משחק אחד. כמה משחקים בסה\"כ?",o:["10","15","20","5"],c:0,
    e:"כל שחקן משחק נגד 4 אחרים\n5×4 = 20, אבל כל משחק נספר פעמיים!\n20÷2 = 10 משחקים 🏆"},
+
+  // ── DATA / עיבוד נתונים ──
+  {id:"dt1",topic:"data",d:1,
+   q:"הגרף מציג כמה ספרים קרא כל ילד בקיץ.\nמי קרא הכי הרבה ספרים?",
+   shape:{type:"bar_chart",bars:[{l:"עמי",v:5},{l:"לי",v:8},{l:"נוי",v:3},{l:"גל",v:6}],maxV:10},
+   o:["עמי","לי","נוי","גל"],c:1,
+   e:"מסתכלים על העמוד הגבוה ביותר בגרף:\nלי — 8 ספרים, הגבוה מכולם 📚"},
+  {id:"dt2",topic:"data",d:1,
+   q:"ציוני 4 תלמידים בבחינה: 70, 90, 80, 60.\nמה הציון הממוצע?",
+   o:["70","75","80","65"],c:1,
+   e:"ממוצע = סכום ÷ מספר ציונים\n70 + 90 + 80 + 60 = 300\n300 ÷ 4 = 75 ✨"},
+  {id:"dt3",topic:"data",d:1,
+   q:"הגרף מציג כמה גולים קלע כל שחקן.\nכמה גולים יותר קלע יואב מאשר רון?",
+   shape:{type:"bar_chart",bars:[{l:"שי",v:4},{l:"יואב",v:9},{l:"ענת",v:6},{l:"רון",v:3}],maxV:12},
+   o:["3","4","5","6"],c:3,
+   e:"יואב: 9 גולים\nרון: 3 גולים\n9 − 3 = 6 גולים יותר ⚽"},
+  {id:"dt4",topic:"data",d:1,
+   q:"אורי שיחק 3 משחקים וקלע: 4, 6, 8 גולים.\nמה ממוצע הגולים למשחק?",
+   o:["5","6","7","8"],c:1,
+   e:"ממוצע = סכום ÷ מספר משחקים\n4 + 6 + 8 = 18\n18 ÷ 3 = 6 גולים בממוצע ⚽"},
+  {id:"dt5",topic:"data",d:2,
+   q:"הממוצע של 4 ציונים הוא 85.\nשלושה ציונים: 90, 80, 82.\nמה הציון הרביעי?",
+   o:["84","86","88","90"],c:2,
+   e:"סכום 4 ציונים = 85 × 4 = 340\n90 + 80 + 82 = 252\nציון רביעי = 340 − 252 = 88 ✨"},
+  {id:"dt6",topic:"data",d:2,
+   q:"הגרף מציג נקודות כל שחקן.\nכמה נקודות יש לנוי ולדן יחד?",
+   shape:{type:"bar_chart",bars:[{l:"אור",v:6},{l:"נוי",v:8},{l:"דן",v:5},{l:"שי",v:7}],maxV:10},
+   o:["11","12","13","14"],c:2,
+   e:"נוי: 8 נקודות\nדן: 5 נקודות\n8 + 5 = 13 נקודות ✅"},
+  {id:"dt7",topic:"data",d:2,
+   q:"ציוני הכיתה: 85, 90, 85, 78, 90, 85, 92.\nמה הציון הנפוץ ביותר (השכיח)?",
+   o:["78","85","90","92"],c:1,
+   e:"סופרים כמה פעמים מופיע כל ציון:\n85 → 3 פעמים ⭐\n90 → 2 פעמים\n78, 92 → פעם אחת\nהשכיח: 85"},
+  {id:"dt8",topic:"data",d:2,
+   q:"5 ציונים: 70, 45, 90, 60, 80.\nמה החציון (הציון האמצעי לאחר מיון)?",
+   o:["60","70","75","80"],c:1,
+   e:"ממיינים מקטן לגדול:\n45, 60, 70, 80, 90\nהמספר האמצעי (ה-3 מתוך 5): 70 ✨"},
+  {id:"dt9",topic:"data",d:3,
+   q:"בכיתה א׳: 20 תלמידים, ממוצע ציון 80.\nבכיתה ב׳: 30 תלמידים, ממוצע ציון 70.\nמה הממוצע של כל התלמידים יחד?",
+   o:["72","74","75","76"],c:1,
+   e:"סכום כיתה א׳ = 20 × 80 = 1600\nסכום כיתה ב׳ = 30 × 70 = 2100\nסה\"כ תלמידים = 50\nממוצע = 3700 ÷ 50 = 74 🧠"},
+  {id:"dt10",topic:"data",d:3,
+   q:"לטל 5 ציונים בממוצע 82.\nהיא רוצה שהממוצע לאחר ציון נוסף יהיה 84.\nאיזה ציון היא צריכה?",
+   o:["88","90","92","94"],c:3,
+   e:"סכום 5 ציונים = 82 × 5 = 410\nסכום 6 ציונים לממוצע 84 = 84 × 6 = 504\nציון נדרש = 504 − 410 = 94 🎯"},
+
+  // ── UNKNOWNS / נעלמים ──
+  {id:"n1",topic:"unknowns",d:1,q:"□ + 17 = 25\nמה ערך □?",o:["6","7","8","9"],c:2,
+   e:"□ + 17 = 25\n□ = 25 − 17 = 8\nבדיקה: 8 + 17 = 25 ✅"},
+  {id:"n2",topic:"unknowns",d:1,q:"4 × □ = 36\nמה □?",o:["7","8","9","10"],c:2,
+   e:"4 × □ = 36\n□ = 36 ÷ 4 = 9\nבדיקה: 4 × 9 = 36 ✅"},
+  {id:"n3",topic:"unknowns",d:1,q:"□ − 13 = 29\nמה □?",o:["40","41","42","43"],c:2,
+   e:"□ − 13 = 29\n□ = 29 + 13 = 42\nבדיקה: 42 − 13 = 29 ✅"},
+  {id:"n4",topic:"unknowns",d:1,q:"48 ÷ □ = 6\nמה □?",o:["6","7","8","9"],c:2,
+   e:"48 ÷ □ = 6\n□ = 48 ÷ 6 = 8\nבדיקה: 48 ÷ 8 = 6 ✅"},
+  {id:"n5",topic:"unknowns",d:2,q:"3 × □ − 5 = 22\nמה □?",o:["7","8","9","10"],c:2,
+   e:"3 × □ − 5 = 22\n3 × □ = 22 + 5 = 27\n□ = 27 ÷ 3 = 9\nבדיקה: 3×9 − 5 = 22 ✅"},
+  {id:"n6",topic:"unknowns",d:2,q:"לנוי פי 3 ספרים ממיכל. יחד יש להם 28 ספרים.\nכמה ספרים יש למיכל?",o:["6","7","8","9"],c:1,
+   e:"מיכל = □, נוי = 3×□\n□ + 3×□ = 28\n4×□ = 28\n□ = 7\nבדיקה: 7 + 21 = 28 ✅"},
+  {id:"n7",topic:"unknowns",d:2,q:"a + b = 16\na − b = 4\nמה a?",o:["8","9","10","11"],c:2,
+   e:"נחבר את שתי השורות:\n(a+b) + (a−b) = 16+4\n2a = 20\na = 10\nb = 16−10 = 6\nבדיקה: 10+6=16 ✓, 10−6=4 ✓"},
+  {id:"n8",topic:"unknowns",d:2,q:"שלושה מספרים עוקבים שסכומם 39.\nמה הקטן ביותר?",o:["11","12","13","14"],c:1,
+   e:"נסמן: □, □+1, □+2\n□+(□+1)+(□+2) = 39\n3×□ + 3 = 39\n3×□ = 36\n□ = 12\nמספרים: 12, 13, 14 ✅"},
+  {id:"n9",topic:"unknowns",d:3,q:"5 × □ + 3 × □ = 64\nמה □?",o:["6","7","8","9"],c:2,
+   e:"5×□ + 3×□ = 64\n(5+3)×□ = 64\n8×□ = 64\n□ = 8\nטריק: מאספים מקדמים של אותו נעלם! 🧠"},
+  {id:"n10",topic:"unknowns",d:3,q:"a × b = 48\na + b = 14\nמה הם a ו-b?",o:["4 ו-12","5 ו-9","6 ו-8","3 ו-16"],c:2,
+   e:"מחפשים שני מספרים:\nכפל=48, סכום=14\n6 × 8 = 48 ✅\n6 + 8 = 14 ✅\nניסינו: 4×12=48, אך 4+12=16 ✗\nהתשובה: 6 ו-8 🌟"},
+
+  // ── FRACTIONS – רמה גבוהה (סגנון בחינה) ──
+  {id:"f11",topic:"fractions",d:3,
+   q:"בבית קולנוע מוקרנים 4 סרטים.\n⅓ מהצופים בסרט הראשון, ⅜ בשני, ¹⁄₁₂ בשלישי.\nשאר הצופים בסרט הרביעי.\nאיזה חלק צופה בסרט הרביעי?",
+   o:["⁷⁄₁₂","⁷⁄₂₄","¹⁹⁄₂₄","⁵⁄₂₄"],c:3,
+   e:"⅓ + ⅜ + ¹⁄₁₂ = ⁸⁄₂₄ + ⁹⁄₂₄ + ²⁄₂₄ = ¹⁹⁄₂₄\n1 − ¹⁹⁄₂₄ = ⁵⁄₂₄ ✨"},
+  {id:"f12",topic:"fractions",d:3,
+   q:"⅓ מהסטודנטים לומדים מתמטיקה\n¼ לומדים הנדסה\n⅖ לומדים היסטוריה\nשאר לומדים פסיכולוגיה.\nאיזה חלק לומד פסיכולוגיה?",
+   o:["¹⁄₆₀","¹⁄₃₀","½","¹⁄₁₀"],c:0,
+   e:"⅓+¼+⅖ = ²⁰⁄₆₀+¹⁵⁄₆₀+²⁴⁄₆₀ = ⁵⁹⁄₆₀\n1 − ⁵⁹⁄₆₀ = ¹⁄₆₀ ✨"},
+
+  // ── WORD PROBLEMS – רמה גבוהה (סגנון בחינה) ──
+  {id:"w11",topic:"word_problems",d:3,
+   q:"עד קטפה ⅓ מהתפוזים שעל העץ.\nאלה קטפה ¾ מהנותרים.\nגורי קטף את 10 התפוזים האחרונים.\nכמה תפוזים היו על העץ מלכתחילה?",
+   o:["90","60","36","180"],c:1,
+   e:"אחרי עד: נשארו ⅔\nאלה לקחה ¾ מ-⅔ → נשארו ¼ × ⅔ = ⅙\n⅙ = 10 תפוזים\nסה\"כ: 10 × 6 = 60 🍊"},
+  {id:"w12",topic:"word_problems",d:3,
+   q:"ביום א' צולמו ⅖ מתלמידי השכבה.\nביום ב' צולמו ⅔ מהנותרים.\nביום ג' צולמו 24 האחרונים.\nכמה תלמידים בשכבה?",
+   o:["120","100","150","180"],c:0,
+   e:"אחרי יום א': נשארו ⅗\nיום ב': ⅔ × ⅗ = ⅖ נוספים\nנשארו: ⅗ − ⅖ = ⅕\n⅕ = 24 → סה\"כ: 24×5 = 120 📸"},
+  {id:"w13",topic:"word_problems",d:3,
+   q:"סוחר קנה 200 ארטיקים ב-800 ש\"ח.\nחמישית נמסו ולא יכול למכור אותם.\nאת השאר מכר ב-6 ש\"ח לארטיק.\nמהו הרווח לאחר קיזוז ההוצאה?",
+   o:["960 ש\"ח","400 ש\"ח","160 ש\"ח","320 ש\"ח"],c:2,
+   e:"נמסו: ⅕×200 = 40\nנמכרו: 160 ארטיקים\nהכנסה: 160×6 = 960 ש\"ח\nרווח: 960−800 = 160 ש\"ח 💰"},
+  {id:"w14",topic:"word_problems",d:3,
+   q:"סוחר קנה 20 אגרטלים ב-700 ש\"ח.\nרבע נשברו ולא יכול למוכרם.\nאת השאר מכר ב-50 ש\"ח לאגרטל.\nמהו הרווח לאחר קיזוז ההוצאה?",
+   o:["300 ש\"ח","50 ש\"ח","225 ש\"ח","750 ש\"ח"],c:1,
+   e:"נשברו: ¼×20 = 5\nנמכרו: 15 אגרטלים\nהכנסה: 15×50 = 750 ש\"ח\nרווח: 750−700 = 50 ש\"ח 💰"},
+
+  // ── UNKNOWNS – השוואת ביטויים אלגבריים ──
+  {id:"n11",topic:"unknowns",d:3,
+   q:"a ו-b מספרים שלמים וחיוביים, a > b.\nמבין הביטויים הבאים, מי הגדול ביותר?",
+   o:["2b÷(3a)","a÷b","b÷a","3a÷(2b)"],c:3,
+   e:"מאחר ש-a > b > 0:\na÷b > 1\n3a÷(2b) = 1.5 × (a÷b) → הגדול מכולם!\nb÷a < 1 < 2b÷(3a) < a÷b < 3a÷(2b) 🧠"},
+  {id:"n12",topic:"unknowns",d:3,
+   q:"a ו-b מספרים שלמים וחיוביים, a גדול מ-b בדיוק פי 2.\nמי הגדול ביותר?",
+   o:["4b÷a","a÷b","b÷a","4a÷b"],c:3,
+   e:"a = 2b, מציבים:\n4b÷a = 4b÷2b = 2\na÷b = 2b÷b = 2\nb÷a = ½\n4a÷b = 4×2b÷b = 8 ← הגדול! 🧠"},
+  {id:"n13",topic:"unknowns",d:3,
+   q:"a ו-b מספרים שלמים וחיוביים, a > b.\nמבין הביטויים הבאים, מי הקטן ביותר?",
+   o:["a−b","a÷b","b÷a","3b÷(2a)"],c:2,
+   e:"a > b > 0 שלמים, לכן:\na−b ≥ 1\na÷b > 1\nb÷a = k (בין 0 ל-1)\n3b÷(2a) = 1.5k > k\nהקטן: b÷a 🧠"},
+
+  // ── SEQUENCES – דפוסים מורכבים ──
+  {id:"s9",topic:"sequences",d:3,q:"3, 6, 18, 21, 63, __\nמהו המשך הסדרה?",o:["24","126","66","189"],c:2,
+   e:"כלל לסירוגין: +3, ×3, +3, ×3, +3\n3+3=6 ✓, 6×3=18 ✓\n18+3=21 ✓, 21×3=63 ✓\n63+3 = 66 🔮"},
+  {id:"s10",topic:"sequences",d:3,q:"3, 2, 4, 3, 6, 5, 10, 9, __\nמהו המשך הסדרה?",o:["12","18","10","8"],c:1,
+   e:"שתי סדרות מסתחלפות!\nאי-זוגיות: 3, 4, 6, 10, __ (+1, +2, +4, +8)\n→ 10+8 = 18\nזוגיות: 2, 3, 5, 9... (+1, +2, +4) 🔮"},
+
+  // ── LOGIC – אמת ושקר / אופרטורים חדשים ──
+  {id:"l9",topic:"logic",d:3,
+   q:"שלושה אופים רבים מי שרף את העוגה:\nראשון: 'מי שרף — הוא שקרן'.\nשני: 'השלישי שרף'.\nשלישי: 'אני שרפתי'.\nשניים אמת, אחד שקר. מי משקר?",
+   o:["האופה הראשון","האופה השני","האופה השלישי","לא ניתן לדעת"],c:0,
+   e:"נניח: השלישי שרף.\nאז השלישי — אמת. השני — אמת.\nאך הראשון אמר 'מי שרף הוא שקרן' — סתירה!\nלכן הראשון משקר ✅"},
+  {id:"l10",topic:"logic",d:3,
+   q:"שלושה תלמידים על שיעורי הבית:\nגיא: 'אני הכנתי'.\nדוד: 'כולנו הכנו'.\nאביב: 'גיא לא הכין'.\nשניים אמת, אחד שקר. מי משקר?",
+   o:["גיא","אביב","דוד","לא ניתן לדעת"],c:1,
+   e:"נניח: גיא הכין → גיא אמת.\nאביב: 'גיא לא הכין' → שקר!\nדוד: 'כולנו הכנו' → אם כולם, אמת.\nאביב הוא המשקר ✅"},
+  {id:"l11",topic:"logic",d:3,
+   q:"פעולה חדשה: a # b = (13 × a + b) ÷ 9\nמה תוצאת 5 # 7?",
+   o:["8","¾","18","72"],c:0,
+   e:"5 # 7 = (13×5 + 7) ÷ 9\n= (65 + 7) ÷ 9\n= 72 ÷ 9 = 8 ✨"},
+  {id:"l12",topic:"logic",d:3,
+   q:"פעולה חדשה: a # b = 5 × (4 × a − b ÷ 3)\nמה תוצאת 5 # 6?",
+   o:["5","10","70","90"],c:3,
+   e:"5 # 6 = 5 × (4×5 − 6÷3)\n= 5 × (20 − 2)\n= 5 × 18 = 90 🧠"},
+
+  // ── GEOMETRY – צורות משולבות ──
+  {id:"g9",topic:"geometry",d:3,
+   q:"ריבוע שהיקפו 24 ס\"מ.\nעל אחת מצלעותיו נוסף משולש שגובהו שווה לצלע הריבוע.\nמהו שטח הצורה כולה?",
+   shape:{type:"square_triangle",d:[6]},
+   o:["30 סמ\"ר","48 סמ\"ר","54 סמ\"ר","לא ניתן לדעת"],c:2,
+   e:"צלע = 24÷4 = 6 ס\"מ\nשטח ריבוע = 6×6 = 36 סמ\"ר\nשטח משולש = 6×6÷2 = 18 סמ\"ר\nסה\"כ = 36+18 = 54 סמ\"ר ✨"},
+  {id:"g10",topic:"geometry",d:3,
+   q:"חצר מלבנית: 9 מ' על 8 מ'.\nבתוכה מחסן ריבועי: 5 מ' על 5 מ'.\nמהו שטח החצר בלי המחסן?",
+   shape:{type:"nested_squares",d:[9,5]},
+   o:["25 מ\"ר","12 מ\"ר","47 מ\"ר","לא ניתן לדעת"],c:2,
+   e:"שטח חצר = 9×8 = 72 מ\"ר\nשטח מחסן = 5×5 = 25 מ\"ר\nחצר בלי מחסן = 72−25 = 47 מ\"ר ✨"},
 ];
 
 // ─────────────────────────────────────────────────────────────
@@ -512,12 +709,23 @@ function startDailyQuiz(){
   state.name = p.name || state.name;
   state.isDiagnostic = false;
   const used = new Set(p.usedIds||[]);
-  let qs = [];
-  const topicKeys = Object.keys(p.topicLevels||{});
-  // Sort by weakness
-  const sorted = [...topicKeys].sort((a,b)=>(p.topicLevels[a]||1)-(p.topicLevels[b]||1));
-  
-  // Distribute: 2 weakest, 1 each next
+
+  // Ensure every current topic has a level (handles newly-added topics)
+  for(const t of Object.keys(TOPICS)) if(!p.topicLevels[t]) p.topicLevels[t]=1;
+
+  // Find topics that never appeared in any session
+  const practiced = new Set(
+    (p.history||[]).flatMap(s=>(s.results||[]).map(r=>r.topic))
+  );
+  const neverPracticed = Object.keys(TOPICS).filter(t=>!practiced.has(t));
+  const weakSorted = Object.keys(TOPICS)
+    .filter(t=>practiced.has(t))
+    .sort((a,b)=>(p.topicLevels[a]||1)-(p.topicLevels[b]||1));
+
+  // Priority order: never-practiced first, then weakest
+  const sorted = [...neverPracticed, ...weakSorted];
+
+  // Distribute: 2 from top topic, 1 each from next three
   let plan = {};
   if(sorted.length>=5){
     plan[sorted[0]]=2;plan[sorted[1]]=1;plan[sorted[2]]=1;plan[sorted[3]]=1;
@@ -529,21 +737,24 @@ function startDailyQuiz(){
     }
   }
 
+  // Pull questions for each topic; never-practiced go first (unshuffled), rest shuffled
+  let priorityQs=[], restQs=[];
   for(const[topic,count] of Object.entries(plan)){
-    const lvl = p.topicLevels[topic]||1;
-    let tqs = getQs(topic,lvl,count,used);
-    if(tqs.length<count) tqs = getQs(topic,lvl,count,new Set());
+    const lvl=p.topicLevels[topic]||1;
+    let tqs=getQs(topic,lvl,count,used);
+    if(tqs.length<count) tqs=getQs(topic,lvl,count,new Set());
     tqs.forEach(q=>used.add(q.id));
-    qs = qs.concat(tqs);
+    if(neverPracticed.includes(topic)) priorityQs=priorityQs.concat(tqs);
+    else restQs=restQs.concat(tqs);
   }
   // Fill to 5
+  let qs=[...priorityQs,...shuffle(restQs)];
   while(qs.length<5){
     const rem=Q.filter(q=>!used.has(q.id));
     if(!rem.length)break;
     const pick=rem[Math.floor(Math.random()*rem.length)];
     qs.push(pick);used.add(pick.id);
   }
-  qs = shuffle(qs);
   state.questions = qs;
   state.currentQ = 0;
   state.sessionResults = [];
@@ -712,6 +923,33 @@ function dNested(outer,inner,ex){
   return _svg(b,ox+OS+28,oy+OS+28);
 }
 
+function dBarChart(bars,maxV,isExpl){
+  const W=230,H=155,pL=26,pR=10,pT=18,pB=34;
+  const cW=W-pL-pR,cH=H-pT-pB;
+  const n=bars.length,slot=cW/n;
+  const bW=Math.min(slot*0.58,34);
+  const colors=['#E85D75','#8B5CF6','#10B981','#F59E0B','#3B82F6','#EC4899'];
+  let b='';
+  for(let i=0;i<=4;i++){
+    const v=Math.round(maxV*i/4);
+    const y=pT+cH-cH*i/4;
+    b+=`<line x1="${pL}" y1="${y}" x2="${W-pR}" y2="${y}" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>`;
+    b+=`<text x="${pL-4}" y="${y+4}" text-anchor="end" font-size="9" fill="${SC.dim}">${v}</text>`;
+  }
+  b+=`<line x1="${pL}" y1="${pT}" x2="${pL}" y2="${pT+cH}" stroke="${SC.dim}" stroke-width="1.5"/>`;
+  b+=`<line x1="${pL}" y1="${pT+cH}" x2="${W-pR}" y2="${pT+cH}" stroke="${SC.dim}" stroke-width="1.5"/>`;
+  bars.forEach((bar,i)=>{
+    const bH=Math.max(2,Math.round((bar.v/maxV)*cH));
+    const bX=pL+slot*i+(slot-bW)/2;
+    const bY=pT+cH-bH;
+    const c=colors[i%colors.length];
+    b+=`<rect x="${bX}" y="${bY}" width="${bW}" height="${bH}" fill="${c}" opacity="0.82" rx="3"/>`;
+    if(isExpl) b+=`<text x="${bX+bW/2}" y="${bY-4}" text-anchor="middle" font-size="10" font-weight="700" fill="${c}">${bar.v}</text>`;
+    b+=`<text x="${bX+bW/2}" y="${pT+cH+13}" text-anchor="middle" font-size="9" fill="${SC.str}">${bar.l}</text>`;
+  });
+  return _svg(b,W,H);
+}
+
 function makeDiagram(shape,isExpl){
   if(!shape) return '';
   try{
@@ -724,6 +962,7 @@ function makeDiagram(shape,isExpl){
       case 'box':             return dBox(d[0],d[1],d[2],isExpl);
       case 'square_triangle': return dSquareTri(d[0],isExpl);
       case 'nested_squares':  return dNested(d[0],d[1],isExpl);
+      case 'bar_chart':       return dBarChart(shape.bars,shape.maxV||10,isExpl);
     }
   }catch(e){}
   return '';
@@ -1171,6 +1410,143 @@ function fireConfetti(){
     c.appendChild(p);
     setTimeout(()=>p.remove(),4000);
   }
+}
+
+// ─────────────────────────────────────────────────────────────
+// PARENT DASHBOARD
+// ─────────────────────────────────────────────────────────────
+let parentVerbose = false;
+
+function showParentDashboard(){
+  showScreen("parent");
+  renderParentView();
+}
+
+function toggleParentVerbose(){
+  parentVerbose = !parentVerbose;
+  renderParentView();
+}
+
+function renderParentView(){
+  const p = state.progress || loadState();
+  const el = document.getElementById("parent-content");
+
+  const backBtn = '<button class="btn-back" onclick="showScreen(\'welcome\')">→ חזרה</button>';
+
+  if(!p || !p.diagnosticDone){
+    el.innerHTML = backBtn + '<div class="par-empty">אין נתונים עדיין.<br>הילד/ה טרם סיים את מבחן האבחון.</div>';
+    return;
+  }
+
+  // Overall stats
+  const totalAnswered = p.totalAnswered || 0;
+  const totalCorrect  = p.totalCorrect  || 0;
+  const accuracy      = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+  const sessionsCount = (p.history || []).length;
+
+  // Topic levels
+  const lvlNames = {1:"מתחיל", 2:"ביניים", 3:"מתקדם"};
+  let topicHTML = '';
+  for(const [t, info] of Object.entries(TOPICS)){
+    const lvl = (p.topicLevels || {})[t] || 1;
+    const dots = [1,2,3].map(i =>
+      `<span class="tl-dot ${i<=lvl?'tl-filled':'tl-empty'}" style="background:${i<=lvl?info.color:''}"></span>`
+    ).join('');
+    topicHTML += `
+      <div class="topic-level-row">
+        <div class="tl-left">${info.icon} ${info.name}</div>
+        <div class="tl-right"><div class="tl-dots">${dots}</div><span class="tl-lvl">רמה ${lvl} — ${lvlNames[lvl]}</span></div>
+      </div>`;
+  }
+
+  // Session history (newest first)
+  const history = [...(p.history || [])].reverse();
+  const todayStr = new Date().toDateString();
+  const diffLabel = {1:'קל', 2:'בינוני', 3:'קשה'};
+
+  let histHTML = '';
+  if(history.length === 0){
+    histHTML = '<div class="par-empty">אין היסטוריה עדיין</div>';
+  } else {
+    for(const session of history){
+      const d   = new Date(session.date);
+      const isToday = d.toDateString() === todayStr;
+      const results = session.results || [];
+      const correct = results.filter(r => r.correct).length;
+      const total   = results.length;
+      const pct     = total > 0 ? Math.round((correct / total) * 100) : 0;
+      const pctCls  = pct >= 80 ? 'hi' : pct >= 50 ? 'mid' : 'lo';
+      const dateStr = isToday
+        ? 'היום'
+        : d.toLocaleDateString('he-IL', {day:'numeric', month:'numeric', year:'2-digit'});
+      const timeStr = d.toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'});
+
+      let verboseHTML = '';
+      if(parentVerbose){
+        verboseHTML = '<div class="session-qs">';
+        for(const r of results){
+          const qData = Q.find(q => q.id === r.qId);
+          const info  = TOPICS[r.topic];
+          const raw   = qData ? qData.q.replace(/\n/g, ' ') : r.qId;
+          const qText = raw.length > 55 ? raw.slice(0, 52) + '...' : raw;
+          verboseHTML += `
+            <div class="sq-row">
+              <span class="sq-icon">${info ? info.icon : '❓'}</span>
+              <span class="sq-text">${escHtml(qText)}</span>
+              <span class="sq-diff">${diffLabel[r.d] || ''}</span>
+              <span class="sq-mark">${r.correct ? '✅' : '❌'}</span>
+            </div>`;
+        }
+        verboseHTML += '</div>';
+      }
+
+      histHTML += `
+        <div class="session-item">
+          <div class="session-hdr">
+            <span class="session-date">${dateStr}, ${timeStr}</span>
+            <div class="session-score">
+              <span>${correct}/${total}</span>
+              <span class="spct ${pctCls}">${pct}%</span>
+            </div>
+          </div>
+          ${verboseHTML}
+        </div>`;
+    }
+  }
+
+  const vtoggle = `
+    <div class="par-verbose" onclick="toggleParentVerbose()">
+      <div class="vtoggle${parentVerbose ? ' von' : ''}"><div class="vtoggle-thumb"></div></div>
+      <span>הצג פרטי שאלות</span>
+    </div>`;
+
+  el.innerHTML = `
+    ${backBtn}
+    <div class="par-header">
+      <div class="par-title">מעקב הורים 👨‍👩‍👧</div>
+      ${p.name ? '<div class="par-name">'+escHtml(p.name)+'</div>' : ''}
+    </div>
+
+    <div class="par-section">
+      <div class="par-section-title">סטטיסטיקות כלליות</div>
+      <div class="par-stats">
+        <div><div class="par-stat-num">${totalCorrect}</div><div class="par-stat-lbl">נכונות</div></div>
+        <div><div class="par-stat-num">${accuracy}%</div><div class="par-stat-lbl">הצלחה</div></div>
+        <div><div class="par-stat-num">${p.bestStreak || 0}</div><div class="par-stat-lbl">🔥 שיא</div></div>
+        <div><div class="par-stat-num">${sessionsCount}</div><div class="par-stat-lbl">אימונים</div></div>
+      </div>
+    </div>
+
+    <div class="par-section">
+      <div class="par-section-title">רמה לפי נושא</div>
+      ${topicHTML}
+    </div>
+
+    <div class="par-section">
+      <div class="par-section-title">היסטוריית אימונים</div>
+      ${vtoggle}
+      ${histHTML}
+    </div>`;
 }
 
 // ─────────────────────────────────────────────────────────────
