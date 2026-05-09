@@ -895,37 +895,51 @@ function startDailyQuiz(){
     .filter(t=>practiced.has(t))
     .sort((a,b)=>(p.topicLevels[a]||1)-(p.topicLevels[b]||1));
 
-  // Priority order: never-practiced first, then weakest
-  const sorted = [...neverPracticed, ...weakSorted];
+  // Priority order: never-practiced first, then weakest practiced topics
+  const allSorted = [...neverPracticed, ...weakSorted];
 
-  // Distribute: 2 from top topic, 1 each from next three
+  // Distribute questions: weak topics (level 1 / never practiced) get 2 each,
+  // others get 1 each. Total budget = 5.
   let plan = {};
-  if(sorted.length>=5){
-    plan[sorted[0]]=2;plan[sorted[1]]=1;plan[sorted[2]]=1;plan[sorted[3]]=1;
-  } else {
-    let rem=5;
-    for(const t of sorted){
-      const c=Math.ceil(rem/(sorted.length-Object.keys(plan).length));
-      plan[t]=Math.min(c,rem);rem-=plan[t];if(rem<=0)break;
-    }
+  let rem = 5;
+  // Pass 1: level-1 and never-practiced topics — 2 questions each
+  for(const t of allSorted){
+    if(rem<=0)break;
+    const lvl = p.topicLevels[t]||1;
+    if(neverPracticed.includes(t)||lvl===1){ plan[t]=Math.min(2,rem); rem-=plan[t]; }
+  }
+  // Pass 2: remaining topics — 1 question each
+  for(const t of allSorted){
+    if(rem<=0)break;
+    if(plan[t])continue;
+    plan[t]=1; rem--;
   }
 
-  // Pull questions for each topic; never-practiced go first (unshuffled), rest shuffled
+  // Pull questions for each topic.
+  // When a topic is exhausted at current level, try all levels before repeating.
   let priorityQs=[], restQs=[];
   for(const[topic,count] of Object.entries(plan)){
     const lvl=p.topicLevels[topic]||1;
     let tqs=getQs(topic,lvl,count,used);
-    if(tqs.length<count) tqs=getQs(topic,lvl,count,new Set());
+    if(tqs.length<count){
+      // Expand to all difficulty levels before repeating
+      const broader=shuffle(Q.filter(q=>q.topic===topic&&!used.has(q.id)));
+      tqs=broader.slice(0,count);
+    }
+    if(tqs.length<count){
+      // Topic truly exhausted — allow repeats as last resort
+      tqs=shuffle(Q.filter(q=>q.topic===topic)).slice(0,count);
+    }
     tqs.forEach(q=>used.add(q.id));
     if(neverPracticed.includes(topic)) priorityQs=priorityQs.concat(tqs);
     else restQs=restQs.concat(tqs);
   }
-  // Fill to 5
+  // Fill to 5 from any new (unseen) question
   let qs=[...priorityQs,...shuffle(restQs)];
   while(qs.length<5){
-    const rem=Q.filter(q=>!used.has(q.id));
-    if(!rem.length)break;
-    const pick=rem[Math.floor(Math.random()*rem.length)];
+    const avail=Q.filter(q=>!used.has(q.id));
+    if(!avail.length)break;
+    const pick=avail[Math.floor(Math.random()*avail.length)];
     qs.push(pick);used.add(pick.id);
   }
   state.questions = qs;
@@ -1170,7 +1184,8 @@ function renderText(text){
     const after=esc.slice(lastHe+1);
     if(!HAS_NUM.test(after)) return esc; // numbers mid-sentence, no split
     const math=after.replace(/^[\s:]+/,'').trim();
-    if(!math) return esc;
+    // Only break for actual math expressions (with operators), not trailing numbers/prices
+    if(!math || !/[×÷=]|\d\s*[+\-*\/]\s*\d/.test(math)) return esc;
     return esc.slice(0,lastHe+1)+'<br><span dir="ltr">'+math+'</span>';
   }).join('<br>');
 }
