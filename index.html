@@ -116,6 +116,8 @@ input{font-family:'Rubik',sans-serif}
 .modal-btn-primary{background:linear-gradient(135deg,#E85D75,#8B5CF6);color:#fff}
 .modal-btn-secondary{background:rgba(255,255,255,.1);color:rgba(255,255,255,.65)}
 .modal-btn-danger{background:#EF4444;color:#fff}
+.profile-img-off{filter:grayscale(1);opacity:.25}
+.restore-lbl{font-size:11px;color:rgba(255,255,255,.4);margin-top:8px;text-align:center;max-width:100px;line-height:1.4;font-weight:500}
 .btn-change-user{margin-top:10px;padding:8px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.38);font-size:13px;display:block;width:100%;transition:color .15s}
 .btn-change-user:active{color:rgba(255,255,255,.7)}
 .girl-stars{font-size:40px;margin:14px 0 10px;letter-spacing:6px}
@@ -816,11 +818,12 @@ const Q_OREN = [
 // PROFILES
 // ─────────────────────────────────────────────────────────────
 const PROFILES = {
-  ido:  {name:"עידו",  img:"ido.png",   key:"brawl-brain-v1",   mode:"gifted", desc:"מתאמן לתוכנית בר-אילן (כיתה ו')"},
-  oren: {name:"אורן",  img:"oren.png",  key:"brawl-brain-oren", mode:"adult",  desc:"למבוגרים, בשביל הכיף"},
-  leni: {name:"לני",   img:"lenny.png", key:"brawl-brain-leni", mode:"girl",   desc:"לכיתה ב'"},
-  taia: {name:"תיאה",  img:"thea.png",  key:"brawl-brain-taia", mode:"girl",   desc:"לגיל 4"},
+  ido:  {name:"עידו",  img:"ido.png",   key:"brawl-brain-v1",   mode:"gifted", type:"gifted",  desc:"מתאמן לתוכנית בר-אילן (כיתה ו')"},
+  oren: {name:"אורן",  img:"oren.png",  key:"brawl-brain-oren", mode:"adult",  type:"adult",   desc:"למבוגרים, בשביל הכיף"},
+  leni: {name:"לני",   img:"lenny.png", key:"brawl-brain-leni", mode:"girl",   type:"kid",     desc:"לכיתה ב'"},
+  taia: {name:"תיאה",  img:"thea.png",  key:"brawl-brain-taia", mode:"girl",   type:"toddler", desc:"לגיל 4"},
 };
+const TYPE_LABEL = {gifted:"מחונן", adult:"מבוגר", kid:"ילד", toddler:"פעוט"};
 
 // ─────────────────────────────────────────────────────────────
 // STATE
@@ -862,17 +865,44 @@ function getProfileName(id){return loadNames()[id]||PROFILES[id].name}
 // ─────────────────────────────────────────────────────────────
 // PROFILE GRID RENDER
 // ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// HIDDEN PROFILES
+// ─────────────────────────────────────────────────────────────
+const HIDDEN_KEY = 'brawl-brain-hidden';
+function loadHidden(){try{return new Set(JSON.parse(localStorage.getItem(HIDDEN_KEY))||[])}catch{return new Set()}}
+function saveHidden(s){try{localStorage.setItem(HIDDEN_KEY,JSON.stringify([...s]))}catch{}}
+
+function removeProfile(id){
+  const s=loadHidden(); s.add(id); saveHidden(s);
+  try{localStorage.removeItem(PROFILES[id].key)}catch{}
+  const n=loadNames(); delete n[id]; saveNames(n);
+  renderProfileGrid();
+}
+function restoreProfile(id){
+  const s=loadHidden(); s.delete(id); saveHidden(s);
+  renderProfileGrid();
+}
+
 function renderProfileGrid(){
-  document.getElementById('profile-grid').innerHTML = Object.entries(PROFILES).map(([id,p])=>`
-    <div class="profile-item">
-      <button class="p-overlay-btn p-delete" title="איפוס" onclick="event.stopPropagation();confirmDeleteProfile('${id}')">✕</button>
-      <button class="p-overlay-btn p-info"   title="מידע"  onclick="event.stopPropagation();showProfileInfo('${id}')">?</button>
-      <button class="profile-btn" onclick="selectProfile('${id}')">
-        <img src="${p.img}" class="profile-img" alt="${escHtml(getProfileName(id))}">
-      </button>
-      <button class="p-overlay-btn p-edit" title="שינוי שם" onclick="event.stopPropagation();editProfileName('${id}')">✏</button>
-    </div>
-  `).join('');
+  const hidden = loadHidden();
+  document.getElementById('profile-grid').innerHTML = Object.entries(PROFILES).map(([id,p])=>{
+    if(hidden.has(id)) return `
+      <div class="profile-item">
+        <button class="profile-btn" onclick="restoreProfile('${id}')">
+          <img src="${p.img}" class="profile-img profile-img-off" alt="">
+          <span class="restore-lbl">+ הוסף פרופיל ${TYPE_LABEL[p.type]}</span>
+        </button>
+      </div>`;
+    return `
+      <div class="profile-item">
+        <button class="p-overlay-btn p-delete" onclick="event.stopPropagation();removeProfile('${id}')">✕</button>
+        <button class="p-overlay-btn p-info"   onclick="event.stopPropagation();showProfileInfo('${id}')">?</button>
+        <button class="profile-btn" onclick="selectProfile('${id}')">
+          <img src="${p.img}" class="profile-img" alt="${escHtml(getProfileName(id))}">
+        </button>
+        <button class="p-overlay-btn p-edit" onclick="event.stopPropagation();editProfileName('${id}')">✏</button>
+      </div>`;
+  }).join('');
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -908,17 +938,6 @@ function doModalConfirm(){if(_modalConfirm)_modalConfirm();}
 
 function showProfileInfo(id){
   showModal({title: getProfileName(id), desc: PROFILES[id].desc});
-}
-function confirmDeleteProfile(id){
-  showModal({
-    title:'איפוס התקדמות',
-    desc:`למחוק את כל ההתקדמות של ${getProfileName(id)}?`,
-    confirmLabel:'מחק', confirmClass:'modal-btn-danger',
-    onConfirm(){
-      try{localStorage.removeItem(PROFILES[id].key)}catch{}
-      hideModal();
-    }
-  });
 }
 function editProfileName(id){
   showModal({
