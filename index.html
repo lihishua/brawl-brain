@@ -98,12 +98,9 @@ input{font-family:'Rubik',sans-serif}
 .profile-btn:active{transform:scale(.90)}
 .profile-btn:hover .profile-img{border-color:rgba(139,92,246,.9);box-shadow:0 0 0 3px rgba(139,92,246,.4),0 4px 16px rgba(0,0,0,.4)}
 .profile-img{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);box-shadow:0 4px 20px rgba(0,0,0,.4);transition:border-color .2s,box-shadow .2s}
-.p-overlay-btn{position:absolute;width:26px;height:26px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;cursor:pointer;z-index:2;transition:transform .12s;line-height:1}
+.p-overlay-btn{position:absolute;width:26px;height:26px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;z-index:2;transition:transform .12s;line-height:1}
 .p-overlay-btn:active{transform:scale(.8)!important}
-.p-info{top:2px;right:2px;background:rgba(99,102,241,.95);color:#fff}
-.p-delete{top:2px;left:2px;background:rgba(239,68,68,.95);color:#fff}
-.p-edit{bottom:2px;left:50%;transform:translateX(-50%);background:rgba(16,185,129,.95);color:#fff;font-size:13px}
-.p-edit:active{transform:translateX(-50%) scale(.8)!important}
+.p-edit{top:2px;right:2px;background:rgba(99,102,241,.95);color:#fff}
 /* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
 .modal-box{background:#1a1040;border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:28px 22px;max-width:300px;width:100%;text-align:center}
@@ -286,10 +283,7 @@ input{font-family:'Rubik',sans-serif}
     <div class="modal-title" id="modal-title"></div>
     <div class="modal-desc" id="modal-desc"></div>
     <input class="modal-input" id="modal-input" type="text" style="display:none">
-    <div class="modal-btns">
-      <button class="modal-btn modal-btn-secondary" id="modal-cancel" onclick="hideModal()">סגור</button>
-      <button class="modal-btn modal-btn-primary" id="modal-confirm" style="display:none" onclick="doModalConfirm()">אישור</button>
-    </div>
+    <div class="modal-btns" id="modal-btns"></div>
   </div>
 </div>
 
@@ -895,12 +889,10 @@ function renderProfileGrid(){
       </div>`;
     return `
       <div class="profile-item">
-        <button class="p-overlay-btn p-delete" onclick="event.stopPropagation();removeProfile('${id}')">✕</button>
-        <button class="p-overlay-btn p-info"   onclick="event.stopPropagation();showProfileInfo('${id}')">?</button>
+        <button class="p-overlay-btn p-edit" onclick="event.stopPropagation();showEditMenu('${id}')">✏</button>
         <button class="profile-btn" onclick="selectProfile('${id}')">
           <img src="${p.img}" class="profile-img" alt="${escHtml(getProfileName(id))}">
         </button>
-        <button class="p-overlay-btn p-edit" onclick="event.stopPropagation();editProfileName('${id}')">✏</button>
       </div>`;
   }).join('');
 }
@@ -908,49 +900,46 @@ function renderProfileGrid(){
 // ─────────────────────────────────────────────────────────────
 // MODAL
 // ─────────────────────────────────────────────────────────────
-let _modalConfirm = null;
-function showModal({title, desc, inputVal, confirmLabel, confirmClass, onConfirm}){
-  document.getElementById('modal-title').textContent = title;
+let _modalActions = [];
+function showModal({title, desc, inputVal, buttons}){
+  document.getElementById('modal-title').textContent = title || '';
   document.getElementById('modal-desc').textContent = desc || '';
   const inp = document.getElementById('modal-input');
-  const confirmBtn = document.getElementById('modal-confirm');
   if(inputVal !== undefined){
-    inp.style.display = 'block'; inp.value = inputVal;
+    inp.style.display='block'; inp.value=inputVal;
     setTimeout(()=>inp.focus(),80);
   } else {
-    inp.style.display = 'none';
+    inp.style.display='none';
   }
-  if(onConfirm){
-    confirmBtn.style.display = 'block';
-    confirmBtn.textContent = confirmLabel || 'אישור';
-    confirmBtn.className = 'modal-btn ' + (confirmClass||'modal-btn-primary');
-    document.getElementById('modal-cancel').textContent = 'ביטול';
-    _modalConfirm = onConfirm;
-  } else {
-    confirmBtn.style.display = 'none';
-    document.getElementById('modal-cancel').textContent = 'סגור';
-    _modalConfirm = null;
-  }
-  document.getElementById('modal-overlay').style.display = 'flex';
+  _modalActions = (buttons||[]).map(b=>b.action);
+  document.getElementById('modal-btns').innerHTML = (buttons||[]).map((b,i)=>
+    `<button class="modal-btn ${b.cls||''}" onclick="_modalActions[${i}]()">${b.label}</button>`
+  ).join('');
+  document.getElementById('modal-overlay').style.display='flex';
 }
-function hideModal(){document.getElementById('modal-overlay').style.display='none';_modalConfirm=null;}
-function doModalConfirm(){if(_modalConfirm)_modalConfirm();}
+function hideModal(){document.getElementById('modal-overlay').style.display='none';_modalActions=[];}
 
-function showProfileInfo(id){
-  showModal({title: getProfileName(id), desc: PROFILES[id].desc});
+function showEditMenu(id){
+  showModal({
+    title: PROFILES[id].desc,
+    buttons:[
+      {label:'שנה שם', cls:'modal-btn-primary', action:()=>{hideModal();showRenameModal(id);}},
+      {label:'מחק', cls:'modal-btn-danger',   action:()=>{hideModal();removeProfile(id);}},
+    ]
+  });
 }
-function editProfileName(id){
+function showRenameModal(id){
   showModal({
     title:'שינוי שם',
-    desc:'',
     inputVal: getProfileName(id),
-    confirmLabel:'שמור',
-    onConfirm(){
-      const val = document.getElementById('modal-input').value.trim();
-      if(val){ const n=loadNames(); n[id]=val; saveNames(n); }
-      hideModal();
-      renderProfileGrid();
-    }
+    buttons:[
+      {label:'ביטול', cls:'modal-btn-secondary', action: hideModal},
+      {label:'שמור',  cls:'modal-btn-primary',   action:()=>{
+        const val=document.getElementById('modal-input').value.trim();
+        if(val){const n=loadNames();n[id]=val;saveNames(n);}
+        hideModal(); renderProfileGrid();
+      }},
+    ]
   });
 }
 
