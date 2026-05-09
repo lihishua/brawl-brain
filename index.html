@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+@font-face{font-family:'GanCLM';src:url('Gan CLM Bold.ttf') format('truetype');font-weight:bold;font-style:normal}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{
   font-family:'Rubik',sans-serif;
@@ -97,7 +98,9 @@ input{font-family:'Rubik',sans-serif}
 .profile-btn{background:none;border:none;padding:6px;display:flex;flex-direction:column;align-items:center;transition:transform .12s}
 .profile-btn:active{transform:scale(.90)}
 .profile-btn:hover .profile-img{border-color:rgba(139,92,246,.9);box-shadow:0 0 0 3px rgba(139,92,246,.4),0 4px 16px rgba(0,0,0,.4)}
-.profile-img{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);box-shadow:0 4px 20px rgba(0,0,0,.4);transition:border-color .2s,box-shadow .2s}
+.profile-img-wrap{position:relative;width:100px;height:100px}
+.profile-img{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);box-shadow:0 4px 20px rgba(0,0,0,.4);transition:border-color .2s,box-shadow .2s;display:block}
+.profile-name-lbl{position:absolute;top:14px;left:0;right:0;text-align:center;font-size:32px;color:#1a0a2e;pointer-events:none;direction:rtl;line-height:1;font-family:'GanCLM',sans-serif}
 .p-overlay-btn{position:absolute;width:28px;height:28px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;transition:transform .12s;background:none;padding:0}
 .p-overlay-btn:active{transform:scale(.8)!important}
 .p-edit{top:2px;right:2px;width:26px;height:26px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3)}
@@ -814,7 +817,7 @@ const Q_OREN = [
 // ─────────────────────────────────────────────────────────────
 const PROFILES = {
   ido:  {name:"עידו",  img:"ido.png",   key:"brawl-brain-v1",   mode:"gifted", type:"gifted",  desc:"מתאמן לתוכנית בר-אילן (כיתה ו')"},
-  oren: {name:"אורן",  img:"oren.png",  key:"brawl-brain-oren", mode:"adult",  type:"adult",   desc:"למבוגרים, בשביל הכיף"},
+  oren: {name:"אורן",  img:"adult-icon.png", key:"brawl-brain-oren", mode:"adult",  type:"adult",   desc:"למבוגרים, בשביל הכיף", nameOverlay:true},
   leni: {name:"לני",   img:"lenny.png", key:"brawl-brain-leni", mode:"girl",   type:"kid",     desc:"לכיתה ב'"},
   taia: {name:"תיאה",  img:"thea.png",  key:"brawl-brain-taia", mode:"girl",   type:"toddler", desc:"לגיל 4"},
 };
@@ -892,7 +895,10 @@ function renderProfileGrid(){
       <div class="profile-item">
         <button class="p-overlay-btn p-edit" onclick="event.stopPropagation();showEditMenu('${id}')"><img src="profile-edit.png" alt="edit"></button>
         <button class="profile-btn" onclick="selectProfile('${id}')">
-          <img src="${p.img}" class="profile-img" alt="${escHtml(getProfileName(id))}">
+          <div class="profile-img-wrap">
+            <img src="${p.img}" class="profile-img" alt="${escHtml(getProfileName(id))}">
+            ${p.nameOverlay ? `<span class="profile-name-lbl">${escHtml(getProfileName(id))}</span>` : ''}
+          </div>
         </button>
       </div>`;
   }).join('');
