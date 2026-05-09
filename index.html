@@ -912,7 +912,9 @@ function showModal({title, desc, inputVal, buttons}){
     inp.style.display='none';
   }
   _modalActions = (buttons||[]).map(b=>b.action);
-  document.getElementById('modal-btns').innerHTML = (buttons||[]).map((b,i)=>
+  const btnsEl = document.getElementById('modal-btns');
+  btnsEl.style.flexDirection = (buttons||[]).length > 2 ? 'column' : 'row';
+  btnsEl.innerHTML = (buttons||[]).map((b,i)=>
     `<button class="modal-btn ${b.cls||''}" onclick="_modalActions[${i}]()">${b.label}</button>`
   ).join('');
   document.getElementById('modal-overlay').style.display='flex';
@@ -923,8 +925,9 @@ function showEditMenu(id){
   showModal({
     title: PROFILES[id].desc,
     buttons:[
-      {label:'שנה שם', cls:'modal-btn-primary', action:()=>{hideModal();showRenameModal(id);}},
-      {label:'מחק', cls:'modal-btn-danger',   action:()=>{hideModal();removeProfile(id);}},
+      {label:'שנה שם',       cls:'modal-btn-primary',   action:()=>{hideModal();showRenameModal(id);}},
+      {label:'מחק פרופיל',   cls:'modal-btn-danger',    action:()=>{hideModal();removeProfile(id);}},
+      {label:'חזרה',         cls:'modal-btn-secondary',  action: hideModal},
     ]
   });
 }
