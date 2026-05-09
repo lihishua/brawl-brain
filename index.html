@@ -933,7 +933,7 @@ function renderProfileGrid(){
         <button class="profile-btn" onclick="selectProfile('${id}')">
           <div class="profile-img-wrap">
             <img src="${p.img}" class="profile-img" alt="${escHtml(getProfileName(id))}">
-            ${p.nameOverlay ? `<span class="profile-name-lbl">${escHtml(getProfileName(id))}</span>` : ''}
+            ${p.nameOverlay ? `<span class="profile-name-lbl" style="font-size:${(n=>{return n<=4?'30px':n<=5?'25px':n<=6?'21px':'17px'})(getProfileName(id).length)}">${escHtml(getProfileName(id))}</span>` : ''}
           </div>
         </button>
       </div>`;
