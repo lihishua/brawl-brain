@@ -92,7 +92,7 @@ input{font-family:'Rubik',sans-serif}
 .profile-card{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:28px;padding:40px 28px;max-width:420px;width:100%;text-align:center;border:1px solid rgba(255,255,255,.1)}
 .profile-sub{font-size:18px;color:rgba(255,255,255,.7);margin:8px 0 32px;font-weight:500}
 .profile-grid{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
-.profile-btn{background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:22px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;font-size:18px;font-weight:700;color:#fff;min-width:105px;transition:transform .12s,border-color .2s,background .2s}
+.profile-btn{background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:22px;padding:14px;display:flex;flex-direction:column;align-items:center;color:#fff;transition:transform .12s,border-color .2s,background .2s}
 .profile-btn:active{transform:scale(.93)}
 .profile-btn:hover{border-color:rgba(139,92,246,.7);background:rgba(139,92,246,.18)}
 .profile-img{width:78px;height:78px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.25);box-shadow:0 4px 16px rgba(0,0,0,.3)}
@@ -257,15 +257,15 @@ input{font-family:'Rubik',sans-serif}
       <div class="profile-grid">
         <button class="profile-btn" onclick="selectProfile('ido')">
           <img src="ido.png" class="profile-img" alt="עידו">
-          <span>עידו</span>
+        </button>
+        <button class="profile-btn" onclick="selectProfile('oren')">
+          <img src="oren.png" class="profile-img" alt="אורן">
         </button>
         <button class="profile-btn" onclick="selectProfile('leni')">
           <img src="lenny.png" class="profile-img" alt="לני">
-          <span>לני</span>
         </button>
         <button class="profile-btn" onclick="selectProfile('taia')">
           <img src="thea.png" class="profile-img" alt="תיאה">
-          <span>תיאה</span>
         </button>
       </div>
     </div>
@@ -760,10 +760,45 @@ const Q_TAIA = [
 ];
 
 // ─────────────────────────────────────────────────────────────
+// QUESTIONS: אורן (adult brain teasers)
+// ─────────────────────────────────────────────────────────────
+const Q_OREN = [
+  // d:1
+  {id:"or1",topic:"logic",d:1,q:"אתה במרוץ ועברת את הרץ שבמקום השני.\nבאיזה מקום אתה עכשיו?",o:["ראשון","שני","שלישי","תלוי בכמה רצים"],c:1,e:"עברת את מקום 2 → אתה במקום 2.\nלא עברת את מקום 1."},
+  {id:"or2",topic:"arithmetic",d:1,q:"מה סכום כל המספרים מ-1 עד 10?",o:["50","55","60","65"],c:1,e:"נוסחת גאוס: n(n+1)/2\n10×11/2 = 55"},
+  {id:"or3",topic:"arithmetic",d:1,q:"12² − 11² = ?",o:["1","13","23","25"],c:2,e:"(12+11)(12−11) = 23×1 = 23\nהפרש ריבועים!"},
+  {id:"or4",topic:"arithmetic",d:1,q:"15% מ-80 = ?",o:["10","12","15","16"],c:1,e:"10% מ-80 = 8\n5% מ-80 = 4\n8 + 4 = 12"},
+  {id:"or5",topic:"logic",d:1,q:"מחבט וכדור עולים ביחד 110 ₪.\nהמחבט עולה 100 ₪ יותר מהכדור.\nכמה עולה הכדור?",o:["5 ₪","10 ₪","100 ₪","55 ₪"],c:0,e:"כדור=x, מחבט=x+100\nx+(x+100)=110 → x=5 ₪\nלא 10!"},
+  {id:"or6",topic:"logic",d:1,q:"שושנה מכפילה שטחה כל יום.\nביום 30 היא מכסה את כל האגם.\nביום כמה היא כיסתה חצי?",o:["יום 15","יום 20","יום 25","יום 29"],c:3,e:"אם ביום 30 כיסוי מלא,\nביום 29 כיסוי חצי.\nגדילה אקספוננציאלית!"},
+  {id:"or7",topic:"arithmetic",d:1,q:"כמה מכפלות של 15 יש בין 1 ל-100?",o:["5","6","7","8"],c:1,e:"15, 30, 45, 60, 75, 90\n= 6 מכפלות"},
+  {id:"or8",topic:"arithmetic",d:1,q:"25 × 24 = ?",o:["550","575","600","625"],c:2,e:"25 × 4 = 100\n25 × 24 = 100 × 6 = 600"},
+  // d:2
+  {id:"or9",topic:"logic",d:2,q:"השעה עכשיו 3:00.\nמה השעה בעוד 100 שעות?",o:["3:00","5:00","7:00","11:00"],c:2,e:"100 = 4×24 + 4\n3:00 + 4 שעות = 7:00"},
+  {id:"or10",topic:"arithmetic",d:2,q:"כמה ספרות יש בכל המספרים\nמ-1 עד 100?",o:["180","192","200","201"],c:1,e:"1-9: 9 ספרות\n10-99: 90×2=180\n100: 3 ספרות\nסה\"כ: 192"},
+  {id:"or11",topic:"arithmetic",d:2,q:"השקעתי 1,000 ₪ ב-10% ריבית שנתית.\nכמה יש לי אחרי שנתיים?",o:["1,100 ₪","1,200 ₪","1,210 ₪","1,020 ₪"],c:2,e:"שנה 1: 1000×1.1 = 1100\nשנה 2: 1100×1.1 = 1210"},
+  {id:"or12",topic:"geometry",d:2,q:"מה הזווית בין מחוגי שעון\nבשעה 3:30?",o:["60°","75°","80°","90°"],c:1,e:"מחוג דקות: 180°\nמחוג שעות ב-3:30: 105°\n180° − 105° = 75°"},
+  {id:"or13",topic:"logic",d:2,q:"3 פועלים בונים 6 בתים ב-6 ימים.\nכמה ימים ייקח ל-6 פועלים\nלבנות 12 בתים?",o:["3 ימים","6 ימים","9 ימים","12 ימים"],c:1,e:"פי 2 פועלים ופי 2 בתים.\nהזמן נשאר 6 ימים!"},
+  {id:"or14",topic:"arithmetic",d:2,q:"כמה ריבועים (בכל הגדלים)\nיש על לוח שחמט 8×8?",o:["64","128","192","204"],c:3,e:"1²+2²+...+8² = 8×9×17/6 = 204"},
+  {id:"or15",topic:"logic",d:2,q:"3 קופסאות: תפוחים / תפוזים / מעורב\nכולן מסומנות לא נכון.\nמ\"מעורב\" שלפת תפוח.\nמה בקופסת \"תפוחים\"?",o:["תפוחים","תפוזים","מעורב","אי אפשר לדעת"],c:1,e:"'מעורב' → רק תפוחים (לא נכון)\n'תפוחים' חייבת: תפוזים\n'תפוזים' → מעורב"},
+  {id:"or16",topic:"arithmetic",d:2,q:"99² = ?",o:["9,604","9,801","9,900","9,999"],c:1,e:"(100−1)² = 10000−200+1 = 9801"},
+  {id:"or17",topic:"logic",d:2,q:"x אחוז מ-y שווה תמיד ל-y אחוז מ-x?",o:["נכון תמיד","שגוי תמיד","תלוי בערכים","רק כש-x=y"],c:0,e:"x%×y = (x/100)×y\ny%×x = (y/100)×x\nשניהם = xy/100 ✓"},
+  // d:3
+  {id:"or18",topic:"logic",d:3,q:"2 חבלים — כל אחד דולק 60 דק׳.\nאיך תמדוד בדיוק 45 דקות?",o:["הדלק שניהם, כבה אחד ב-30 דק'","הדלק חבל 1 משני קצוות + חבל 2 מקצה אחד","הדלק חבל 1, אחרי 15 דק' הדלק חבל 2","אי אפשר"],c:1,e:"חבל 1 משני קצוות = נגמר ב-30 דק'.\nאז הדלק חבל 2 מהקצה השני → עוד 15 דק'.\nסה\"כ 45!"},
+  {id:"or19",topic:"arithmetic",d:3,q:"מה ספרת האחדות של 7¹⁰⁰?",o:["1","3","7","9"],c:0,e:"מחזור: 7→9→3→1→7...\n100 mod 4 = 0 → ספרת האחדות = 1"},
+  {id:"or20",topic:"arithmetic",d:3,q:"כמה אפסים יש בסוף 100! ?",o:["20","24","25","10"],c:1,e:"ספור גורמי 5:\n⌊100/5⌋+⌊100/25⌋ = 20+4 = 24"},
+  {id:"or21",topic:"logic",d:3,q:"חדר A: 3 מתגים. חדר B: נורה.\nמותר להיכנס לחדר B פעם אחת.\nאיך יודעים איזה מתג?",o:["מנסים לפי הסדר","הדלק מתג 1 ל-10 דק', כבה, הדלק מתג 2, היכנס","הדלק את כל 3 ובדוק","צריך שניים כדי לפתור"],c:1,e:"נורה דולקת = מתג 2\nנורה כבויה+חמה = מתג 1\nנורה כבויה+קרה = מתג 3"},
+  {id:"or22",topic:"arithmetic",d:3,q:"מה השארית של 2⁵⁰ ÷ 7?",o:["1","2","4","6"],c:2,e:"מחזור mod 7: 2,4,1,2,4,1...\n50 mod 3 = 2 → שארית 4"},
+  {id:"or23",topic:"logic",d:3,q:"12 כדורים — אחד שונה במשקל.\nמינימום כמה שקילות במאזניים\nלזיהוי הכדור?",o:["2","3","4","5"],c:1,e:"3 שקילות מספיקות!\nכל שקילה מחלקת ל-3 קבוצות."},
+  {id:"or24",topic:"arithmetic",d:3,q:"מה הספרה ה-100 אחרי הנקודה של 1÷7?",o:["1","4","8","2"],c:2,e:"1/7 = 0.142857142857...\nמחזור 6 ספרות: 1,4,2,8,5,7\n100 mod 6 = 4 → ספרה 4 = 8"},
+  {id:"or25",topic:"logic",d:3,q:"היום גילי = שליש מגיל אבי.\nלפני 10 שנים גילי = רבע מגיל אבי.\nעוד כמה שנים גילי יהיה חצי מגיל אבי?",o:["15 שנים","20 שנים","25 שנים","30 שנים"],c:3,e:"גילי=30, אבי=90\nX: 30+X = (90+X)/2\n60+2X = 90+X → X=30"},
+];
+
+// ─────────────────────────────────────────────────────────────
 // PROFILES
 // ─────────────────────────────────────────────────────────────
 const PROFILES = {
   ido:  {name:"עידו",  img:"ido.png",  key:"brawl-brain-v1",   mode:"gifted"},
+  oren: {name:"אורן",  img:"oren.png", key:"brawl-brain-oren", mode:"adult"},
   leni: {name:"לני",   img:"lenny.png", key:"brawl-brain-leni", mode:"girl"},
   taia: {name:"תיאה",  img:"thea.png",  key:"brawl-brain-taia", mode:"girl"},
 };
@@ -842,7 +877,7 @@ function selectProfile(id){
 function startGirlsQuiz(){
   const p = state.progress;
   const id = state.profile;
-  const qPool = id === 'leni' ? Q_LENI : Q_TAIA;
+  const qPool = id === 'leni' ? Q_LENI : id === 'oren' ? Q_OREN : Q_TAIA;
   const lvl = p.level || 1;
   const used = new Set(p.usedIds || []);
   let pool = qPool.filter(q=>q.d===lvl && !used.has(q.id));
@@ -1526,7 +1561,8 @@ function renderResults(){
   if(state.profile && state.profile !== 'ido'){
     const stars = pct>=80?3:pct>=50?2:1;
     const starStr = '⭐'.repeat(stars)+'☆'.repeat(3-stars);
-    const msg = pct>=80?"מדהים! המשיכי כך 🏆":pct>=50?"יפה מאוד! ✨":"ממשיכים להתאמן 💪";
+    const isMale = PROFILES[state.profile].mode === 'adult';
+    const msg = pct>=80?(isMale?"מדהים! המשך כך 🏆":"מדהים! המשיכי כך 🏆"):pct>=50?"יפה מאוד! ✨":"ממשיכים להתאמן 💪";
     document.getElementById("results-content").innerHTML=`
       <div class="res-emoji">${pct>=80?"🏆":pct>=50?"💪":"🌱"}</div>
       <h2 class="res-title">${escHtml(state.name)}, ${msg}</h2>
@@ -1743,7 +1779,7 @@ function renderParentView(){
       if(parentVerbose){
         verboseHTML = '<div class="session-qs">';
         for(const r of results){
-          const qData = [...Q,...Q_LENI,...Q_TAIA].find(q => q.id === r.qId);
+          const qData = [...Q,...Q_LENI,...Q_TAIA,...Q_OREN].find(q => q.id === r.qId);
           const info  = TOPICS[r.topic];
           const raw   = qData ? qData.q.replace(/\n/g, ' ') : r.qId;
           const qText = raw.length > 55 ? raw.slice(0, 52) + '...' : raw;
