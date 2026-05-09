@@ -92,11 +92,30 @@ input{font-family:'Rubik',sans-serif}
 .profile-card{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:28px;padding:40px 28px;max-width:420px;width:100%;text-align:center;border:1px solid rgba(255,255,255,.1)}
 .home-brain-icon{width:80px;height:80px;object-fit:contain;margin-bottom:8px}
 .profile-sub{font-size:18px;color:rgba(255,255,255,.7);margin:8px 0 32px;font-weight:500}
-.profile-grid{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+.profile-grid{display:flex;justify-content:center;gap:28px;flex-wrap:wrap}
+.profile-item{position:relative;display:inline-flex;align-items:center;justify-content:center}
 .profile-btn{background:none;border:none;padding:6px;display:flex;flex-direction:column;align-items:center;transition:transform .12s}
 .profile-btn:active{transform:scale(.90)}
 .profile-btn:hover .profile-img{border-color:rgba(139,92,246,.9);box-shadow:0 0 0 3px rgba(139,92,246,.4),0 4px 16px rgba(0,0,0,.4)}
 .profile-img{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);box-shadow:0 4px 20px rgba(0,0,0,.4);transition:border-color .2s,box-shadow .2s}
+.p-overlay-btn{position:absolute;width:26px;height:26px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;cursor:pointer;z-index:2;transition:transform .12s;line-height:1}
+.p-overlay-btn:active{transform:scale(.8)!important}
+.p-info{top:2px;right:2px;background:rgba(99,102,241,.95);color:#fff}
+.p-delete{top:2px;left:2px;background:rgba(239,68,68,.95);color:#fff}
+.p-edit{bottom:2px;left:50%;transform:translateX(-50%);background:rgba(16,185,129,.95);color:#fff;font-size:13px}
+.p-edit:active{transform:translateX(-50%) scale(.8)!important}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
+.modal-box{background:#1a1040;border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:28px 22px;max-width:300px;width:100%;text-align:center}
+.modal-title{font-size:19px;font-weight:700;color:#fff;margin-bottom:8px}
+.modal-desc{font-size:15px;color:rgba(255,255,255,.65);line-height:1.55;margin-bottom:20px}
+.modal-input{width:100%;padding:12px 14px;border-radius:10px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-size:17px;margin-bottom:18px;font-family:'Rubik',sans-serif;text-align:right;outline:none}
+.modal-input:focus{border-color:rgba(139,92,246,.6)}
+.modal-btns{display:flex;gap:10px}
+.modal-btn{flex:1;padding:12px;border-radius:10px;border:none;font-size:15px;font-weight:600;font-family:'Rubik',sans-serif;cursor:pointer}
+.modal-btn-primary{background:linear-gradient(135deg,#E85D75,#8B5CF6);color:#fff}
+.modal-btn-secondary{background:rgba(255,255,255,.1);color:rgba(255,255,255,.65)}
+.modal-btn-danger{background:#EF4444;color:#fff}
 .btn-change-user{margin-top:10px;padding:8px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.38);font-size:13px;display:block;width:100%;transition:color .15s}
 .btn-change-user:active{color:rgba(255,255,255,.7)}
 .girl-stars{font-size:40px;margin:14px 0 10px;letter-spacing:6px}
@@ -254,20 +273,20 @@ input{font-family:'Rubik',sans-serif}
     <div class="profile-card">
       <img src="brain-icon.png" class="home-brain-icon" alt="Brawl Brain">
       <h1 class="welcome-title">Brawl Brain</h1>
-<div class="profile-grid">
-        <button class="profile-btn" onclick="selectProfile('ido')">
-          <img src="ido.png" class="profile-img" alt="עידו">
-        </button>
-        <button class="profile-btn" onclick="selectProfile('oren')">
-          <img src="oren.png" class="profile-img" alt="אורן">
-        </button>
-        <button class="profile-btn" onclick="selectProfile('leni')">
-          <img src="lenny.png" class="profile-img" alt="לני">
-        </button>
-        <button class="profile-btn" onclick="selectProfile('taia')">
-          <img src="thea.png" class="profile-img" alt="תיאה">
-        </button>
-      </div>
+      <div class="profile-grid" id="profile-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ MODAL ═══════════════════ -->
+<div class="modal-overlay" id="modal-overlay" style="display:none" onclick="if(event.target===this)hideModal()">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-desc" id="modal-desc"></div>
+    <input class="modal-input" id="modal-input" type="text" style="display:none">
+    <div class="modal-btns">
+      <button class="modal-btn modal-btn-secondary" id="modal-cancel" onclick="hideModal()">סגור</button>
+      <button class="modal-btn modal-btn-primary" id="modal-confirm" style="display:none" onclick="doModalConfirm()">אישור</button>
     </div>
   </div>
 </div>
@@ -797,10 +816,10 @@ const Q_OREN = [
 // PROFILES
 // ─────────────────────────────────────────────────────────────
 const PROFILES = {
-  ido:  {name:"עידו",  img:"ido.png",  key:"brawl-brain-v1",   mode:"gifted"},
-  oren: {name:"אורן",  img:"oren.png", key:"brawl-brain-oren", mode:"adult"},
-  leni: {name:"לני",   img:"lenny.png", key:"brawl-brain-leni", mode:"girl"},
-  taia: {name:"תיאה",  img:"thea.png",  key:"brawl-brain-taia", mode:"girl"},
+  ido:  {name:"עידו",  img:"ido.png",   key:"brawl-brain-v1",   mode:"gifted", desc:"מתאמן לתוכנית בר-אילן (כיתה ו')"},
+  oren: {name:"אורן",  img:"oren.png",  key:"brawl-brain-oren", mode:"adult",  desc:"למבוגרים, בשביל הכיף"},
+  leni: {name:"לני",   img:"lenny.png", key:"brawl-brain-leni", mode:"girl",   desc:"לכיתה ב'"},
+  taia: {name:"תיאה",  img:"thea.png",  key:"brawl-brain-taia", mode:"girl",   desc:"לגיל 4"},
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -833,6 +852,90 @@ function saveState(){
 }
 
 // ─────────────────────────────────────────────────────────────
+// CUSTOM NAMES
+// ─────────────────────────────────────────────────────────────
+const NAMES_KEY = 'brawl-brain-names';
+function loadNames(){try{return JSON.parse(localStorage.getItem(NAMES_KEY))||{}}catch{return{}}}
+function saveNames(n){try{localStorage.setItem(NAMES_KEY,JSON.stringify(n))}catch{}}
+function getProfileName(id){return loadNames()[id]||PROFILES[id].name}
+
+// ─────────────────────────────────────────────────────────────
+// PROFILE GRID RENDER
+// ─────────────────────────────────────────────────────────────
+function renderProfileGrid(){
+  document.getElementById('profile-grid').innerHTML = Object.entries(PROFILES).map(([id,p])=>`
+    <div class="profile-item">
+      <button class="p-overlay-btn p-delete" title="איפוס" onclick="event.stopPropagation();confirmDeleteProfile('${id}')">✕</button>
+      <button class="p-overlay-btn p-info"   title="מידע"  onclick="event.stopPropagation();showProfileInfo('${id}')">?</button>
+      <button class="profile-btn" onclick="selectProfile('${id}')">
+        <img src="${p.img}" class="profile-img" alt="${escHtml(getProfileName(id))}">
+      </button>
+      <button class="p-overlay-btn p-edit" title="שינוי שם" onclick="event.stopPropagation();editProfileName('${id}')">✏</button>
+    </div>
+  `).join('');
+}
+
+// ─────────────────────────────────────────────────────────────
+// MODAL
+// ─────────────────────────────────────────────────────────────
+let _modalConfirm = null;
+function showModal({title, desc, inputVal, confirmLabel, confirmClass, onConfirm}){
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-desc').textContent = desc || '';
+  const inp = document.getElementById('modal-input');
+  const confirmBtn = document.getElementById('modal-confirm');
+  if(inputVal !== undefined){
+    inp.style.display = 'block'; inp.value = inputVal;
+    setTimeout(()=>inp.focus(),80);
+  } else {
+    inp.style.display = 'none';
+  }
+  if(onConfirm){
+    confirmBtn.style.display = 'block';
+    confirmBtn.textContent = confirmLabel || 'אישור';
+    confirmBtn.className = 'modal-btn ' + (confirmClass||'modal-btn-primary');
+    document.getElementById('modal-cancel').textContent = 'ביטול';
+    _modalConfirm = onConfirm;
+  } else {
+    confirmBtn.style.display = 'none';
+    document.getElementById('modal-cancel').textContent = 'סגור';
+    _modalConfirm = null;
+  }
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+function hideModal(){document.getElementById('modal-overlay').style.display='none';_modalConfirm=null;}
+function doModalConfirm(){if(_modalConfirm)_modalConfirm();}
+
+function showProfileInfo(id){
+  showModal({title: getProfileName(id), desc: PROFILES[id].desc});
+}
+function confirmDeleteProfile(id){
+  showModal({
+    title:'איפוס התקדמות',
+    desc:`למחוק את כל ההתקדמות של ${getProfileName(id)}?`,
+    confirmLabel:'מחק', confirmClass:'modal-btn-danger',
+    onConfirm(){
+      try{localStorage.removeItem(PROFILES[id].key)}catch{}
+      hideModal();
+    }
+  });
+}
+function editProfileName(id){
+  showModal({
+    title:'שינוי שם',
+    desc:'',
+    inputVal: getProfileName(id),
+    confirmLabel:'שמור',
+    onConfirm(){
+      const val = document.getElementById('modal-input').value.trim();
+      if(val){ const n=loadNames(); n[id]=val; saveNames(n); }
+      hideModal();
+      renderProfileGrid();
+    }
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────────────────────
 function init(){
@@ -840,6 +943,7 @@ function init(){
   const btn = document.getElementById("btn-go");
   inp.addEventListener("input",()=>{btn.disabled=!inp.value.trim()});
   inp.addEventListener("keydown",(e)=>{if(e.key==="Enter"&&inp.value.trim())startDiagnostic()});
+  renderProfileGrid();
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -851,7 +955,8 @@ function selectProfile(id){
   if(id === 'ido'){
     if(saved && saved.diagnosticDone){
       state.progress = saved;
-      state.name = saved.name || PROFILES[id].name;
+      state.progress = saved;
+      state.name = saved.name || getProfileName(id);
       document.getElementById("welcome-new").style.display="none";
       document.getElementById("welcome-continue").style.display="block";
     } else {
@@ -859,17 +964,18 @@ function selectProfile(id){
       document.getElementById("welcome-new").style.display="block";
       document.getElementById("welcome-continue").style.display="none";
       const inp = document.getElementById("name-input");
-      inp.value = PROFILES[id].name;
+      inp.value = getProfileName(id);
       document.getElementById("btn-go").disabled = false;
     }
     showScreen("welcome");
   } else {
+    const pname = getProfileName(id);
     if(saved){
       state.progress = saved;
     } else {
-      state.progress = {name:PROFILES[id].name,profile:id,level:1,history:[],usedIds:[],totalCorrect:0,totalAnswered:0,bestStreak:0};
+      state.progress = {name:pname,profile:id,level:1,history:[],usedIds:[],totalCorrect:0,totalAnswered:0,bestStreak:0};
     }
-    state.name = PROFILES[id].name;
+    state.name = pname;
     startGirlsQuiz();
   }
 }
