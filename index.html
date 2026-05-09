@@ -1536,7 +1536,7 @@ function renderResults(){
         <div class="score-pct">${pct}%</div>
       </div>
       <button class="btn-start" onclick="startGirlsQuiz()">💪 עוד סיבוב!</button>
-      <button class="btn-change-user" onclick="showScreen('profile')">← בחירת משתמש</button>
+      <button class="btn-change-user" onclick="showScreen('profile')">סיימתי להיום 👋</button>
     `;
     return;
   }
@@ -1599,6 +1599,7 @@ function renderResults(){
     ${statsHTML}
     <button class="btn-start" onclick="startSession()">${state.isDiagnostic?"🎯 מתחילים לתרגל!":"💪 עוד סיבוב!"}</button>
     ${correct<total?'<p class="encourage">'+encourageText+'</p>':''}
+    ${!state.isDiagnostic?'<button class="btn-change-user" onclick="showScreen(\'welcome\')">סיימתי להיום 👋</button>':''}
     <button class="btn-change-user" onclick="showScreen('profile')">← החלף משתמש</button>
   `;
 }
